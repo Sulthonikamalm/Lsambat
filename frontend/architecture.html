@@ -1,0 +1,665 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SurabayaSambat v2 — System Architecture</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --red: #be123c;
+            --red-light: #fff1f2;
+            --red-border: rgba(190,18,60,0.2);
+            --green: #059669;
+            --green-light: #ecfdf5;
+            --green-border: rgba(5,150,105,0.2);
+            --orange: #d97706;
+            --orange-light: #fffbeb;
+            --orange-border: rgba(217,119,6,0.2);
+            --blue: #2563eb;
+            --blue-light: #eff6ff;
+            --blue-border: rgba(37,99,235,0.2);
+            --purple: #7c3aed;
+            --purple-light: #f5f3ff;
+            --gray: #64748b;
+            --gray-light: #f1f5f9;
+            --gray-border: #e2e8f0;
+            --dark: #0f172a;
+            --white: #ffffff;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background: var(--gray-light);
+            color: var(--dark);
+            padding: 40px 24px;
+        }
+
+        .page-title {
+            text-align: center;
+            margin-bottom: 48px;
+        }
+        .page-title h1 {
+            font-size: 1.8rem;
+            font-weight: 800;
+            color: var(--dark);
+            margin-bottom: 6px;
+        }
+        .page-title h1 span { color: var(--red); }
+        .page-title p {
+            color: var(--gray);
+            font-size: 0.9rem;
+        }
+
+        /* ── Section ─────────────────────────── */
+        .section {
+            max-width: 1000px;
+            margin: 0 auto 56px;
+        }
+        .section-title {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: var(--dark);
+            margin-bottom: 24px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid var(--red);
+            display: inline-block;
+        }
+
+        /* ── State Machine Diagram ───────────── */
+        .state-diagram {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0;
+        }
+
+        .state-row {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .state-box {
+            width: 200px;
+            padding: 20px;
+            border-radius: 12px;
+            text-align: center;
+            border: 2px solid;
+            position: relative;
+            background: var(--white);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+        }
+
+        .state-box .state-name {
+            font-size: 0.95rem;
+            font-weight: 700;
+            margin-bottom: 4px;
+        }
+        .state-box .state-desc {
+            font-size: 0.72rem;
+            color: var(--gray);
+        }
+
+        .state-idle { border-color: var(--gray-border); }
+        .state-idle .state-name { color: var(--gray); }
+
+        .state-init { border-color: var(--blue-border); background: var(--blue-light); }
+        .state-init .state-name { color: var(--blue); }
+
+        .state-warmup { border-color: var(--orange-border); background: var(--orange-light); }
+        .state-warmup .state-name { color: var(--orange); }
+
+        .state-official { border-color: var(--green-border); background: var(--green-light); }
+        .state-official .state-name { color: var(--green); }
+
+        .state-stopped { border-color: var(--red-border); background: var(--red-light); }
+        .state-stopped .state-name { color: var(--red); }
+
+        /* Arrows */
+        .arrow-down {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 8px 0;
+        }
+        .arrow-down .arrow-line {
+            width: 2px;
+            height: 28px;
+            background: var(--gray);
+        }
+        .arrow-down .arrow-head {
+            width: 0; height: 0;
+            border-left: 7px solid transparent;
+            border-right: 7px solid transparent;
+            border-top: 8px solid var(--gray);
+        }
+        .arrow-down .arrow-label {
+            font-size: 0.7rem;
+            color: var(--gray);
+            font-weight: 600;
+            margin: 4px 0;
+            text-align: center;
+            background: var(--gray-light);
+            padding: 2px 10px;
+            border-radius: 4px;
+        }
+
+        .arrow-right {
+            display: flex;
+            align-items: center;
+            gap: 0;
+        }
+        .arrow-right .arrow-line {
+            width: 40px;
+            height: 2px;
+            background: var(--gray);
+        }
+        .arrow-right .arrow-head {
+            width: 0; height: 0;
+            border-top: 7px solid transparent;
+            border-bottom: 7px solid transparent;
+            border-left: 8px solid var(--gray);
+        }
+        .arrow-right .arrow-label {
+            font-size: 0.68rem;
+            color: var(--gray);
+            font-weight: 600;
+            white-space: nowrap;
+            position: absolute;
+            top: -18px;
+        }
+
+        .arrow-branch {
+            display: flex;
+            align-items: flex-start;
+            gap: 0;
+            position: relative;
+        }
+
+        /* ── Flow Diagram ────────────────────── */
+        .flow {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0;
+        }
+
+        .flow-box {
+            padding: 14px 24px;
+            border-radius: 10px;
+            text-align: center;
+            font-size: 0.82rem;
+            font-weight: 600;
+            border: 1.5px solid;
+            background: var(--white);
+            max-width: 340px;
+            box-shadow: 0 1px 4px rgba(0,0,0,0.04);
+        }
+
+        .flow-box.user { border-color: var(--blue-border); background: var(--blue-light); color: var(--blue); }
+        .flow-box.frontend { border-color: var(--purple); background: var(--purple-light); color: var(--purple); border-style: dashed; }
+        .flow-box.backend { border-color: var(--red-border); background: var(--red-light); color: var(--red); }
+        .flow-box.apify { border-color: var(--green-border); background: var(--green-light); color: var(--green); }
+        .flow-box.data { border-color: var(--orange-border); background: var(--orange-light); color: var(--orange); }
+        .flow-box.decision {
+            border-color: var(--gray);
+            background: var(--white);
+            color: var(--dark);
+            border-radius: 0;
+            transform: rotate(0deg);
+            border-width: 2px;
+            position: relative;
+        }
+        .flow-box.decision::before {
+            content: "?";
+            position: absolute;
+            top: -8px;
+            right: -8px;
+            width: 20px;
+            height: 20px;
+            background: var(--red);
+            color: white;
+            border-radius: 50%;
+            font-size: 0.7rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .flow-sub {
+            font-size: 0.7rem;
+            font-weight: 400;
+            color: var(--gray);
+            margin-top: 4px;
+            display: block;
+        }
+
+        .flow-arrow {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 4px 0;
+        }
+        .flow-arrow .line {
+            width: 2px;
+            height: 20px;
+            background: var(--gray-border);
+        }
+        .flow-arrow .head {
+            width: 0; height: 0;
+            border-left: 5px solid transparent;
+            border-right: 5px solid transparent;
+            border-top: 6px solid var(--gray);
+        }
+        .flow-arrow .label {
+            font-size: 0.65rem;
+            color: var(--gray);
+            font-weight: 500;
+            padding: 1px 8px;
+            background: var(--gray-light);
+            border-radius: 3px;
+        }
+
+        /* Split decision */
+        .flow-split {
+            display: flex;
+            gap: 40px;
+            align-items: flex-start;
+            justify-content: center;
+        }
+        .flow-branch {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0;
+        }
+        .branch-label {
+            font-size: 0.68rem;
+            font-weight: 700;
+            padding: 3px 10px;
+            border-radius: 4px;
+            margin-bottom: 8px;
+        }
+        .branch-label.yes { background: var(--green-light); color: var(--green); }
+        .branch-label.no { background: var(--red-light); color: var(--red); }
+
+        /* Legend */
+        .legend {
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+            margin-top: 24px;
+            justify-content: center;
+        }
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 0.75rem;
+            color: var(--gray);
+        }
+        .legend-dot {
+            width: 14px;
+            height: 14px;
+            border-radius: 4px;
+            border: 1.5px solid;
+        }
+
+        /* Connector label between sections */
+        .section-connector {
+            text-align: center;
+            margin: 16px 0;
+            font-size: 0.75rem;
+            color: var(--gray);
+            font-weight: 600;
+        }
+
+        .mono { font-family: 'JetBrains Mono', monospace; font-size: 0.72rem; }
+
+        /* Print */
+        @media print {
+            body { background: white; padding: 20px; }
+            .section { page-break-inside: avoid; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="page-title">
+        <h1><span>SurabayaSambat</span> v2 — System Architecture</h1>
+        <p>Arsitektur Lengkap Sistem Incremental Comment Monitoring</p>
+    </div>
+
+    <!-- ════════════════════════════════════════════════════ -->
+    <!-- SECTION 1: STATE MACHINE -->
+    <!-- ════════════════════════════════════════════════════ -->
+    <div class="section">
+        <div class="section-title">1. State Machine — Mode Sistem</div>
+
+        <div class="state-diagram">
+            <!-- IDLE -->
+            <div class="state-box state-idle">
+                <div class="state-name">IDLE</div>
+                <div class="state-desc">Belum ada baseline</div>
+            </div>
+
+            <div class="arrow-down">
+                <div class="arrow-label">Klik Initialize Baseline</div>
+                <div class="arrow-line"></div>
+                <div class="arrow-head"></div>
+            </div>
+
+            <!-- INITIALIZING -->
+            <div class="state-box state-init">
+                <div class="state-name">INITIALIZING</div>
+                <div class="state-desc">Scraping semua komentar lama</div>
+            </div>
+
+            <div class="arrow-down">
+                <div class="arrow-label">Selesai (otomatis)</div>
+                <div class="arrow-line"></div>
+                <div class="arrow-head"></div>
+            </div>
+
+            <!-- WARM-UP -->
+            <div class="state-box state-warmup">
+                <div class="state-name">WARM-UP MODE</div>
+                <div class="state-desc">Stabilisasi baseline &mdash; komentar yang ditemukan TIDAK masuk dataset</div>
+            </div>
+
+            <div class="arrow-down">
+                <div class="arrow-label">Klik Mulai Monitoring</div>
+                <div class="arrow-line"></div>
+                <div class="arrow-head"></div>
+            </div>
+
+            <!-- OFFICIAL -->
+            <div class="state-box state-official">
+                <div class="state-name">OFFICIAL MONITORING</div>
+                <div class="state-desc">Komentar baru MASUK dataset (new_comments.csv)</div>
+            </div>
+
+            <div class="arrow-down">
+                <div class="arrow-label">Klik Stop</div>
+                <div class="arrow-line"></div>
+                <div class="arrow-head"></div>
+            </div>
+
+            <!-- STOPPED -->
+            <div class="state-box state-stopped">
+                <div class="state-name">STOPPED</div>
+                <div class="state-desc">Dataset final siap download</div>
+            </div>
+        </div>
+
+        <div style="text-align:center; margin-top:16px; font-size:0.75rem; color:var(--gray);">
+            <em>Reset tersedia di semua mode &rarr; kembali ke IDLE</em>
+        </div>
+    </div>
+
+    <!-- ════════════════════════════════════════════════════ -->
+    <!-- SECTION 2: FULL FLOW — Initialize Baseline -->
+    <!-- ════════════════════════════════════════════════════ -->
+    <div class="section">
+        <div class="section-title">2. Alur Lengkap — Initialize Baseline</div>
+
+        <div class="flow">
+            <div class="flow-box user">
+                User klik "Initialize Baseline"
+                <span class="flow-sub">Di browser dashboard (http://localhost:5000)</span>
+            </div>
+
+            <div class="flow-arrow"><div class="line"></div><div class="label">POST /api/initialize</div><div class="line"></div><div class="head"></div></div>
+
+            <div class="flow-box frontend">
+                Browser kirim HTTP POST ke Flask Backend
+                <span class="flow-sub">via fetch() dari app.js</span>
+            </div>
+
+            <div class="flow-arrow"><div class="line"></div><div class="head"></div></div>
+
+            <div class="flow-box backend">
+                Flask: app.py menerima request
+                <span class="flow-sub">Panggil monitor.initialize_baseline(limit=1000)</span>
+            </div>
+
+            <div class="flow-arrow"><div class="line"></div><div class="head"></div></div>
+
+            <div class="flow-box backend">
+                monitor.py &rarr; scraper.scrape_comments()
+                <span class="flow-sub">Pilih token (round-robin), buat actor input JSON</span>
+            </div>
+
+            <div class="flow-arrow"><div class="line"></div><div class="label">HTTP POST + JSON payload</div><div class="line"></div><div class="head"></div></div>
+
+            <div class="flow-box apify">
+                Apify REST API v2
+                <span class="flow-sub mono">POST /v2/acts/apify~instagram-scraper/run-sync-get-dataset-items</span>
+            </div>
+
+            <div class="flow-arrow"><div class="line"></div><div class="label">Apify jalankan actor di cloud</div><div class="line"></div><div class="head"></div></div>
+
+            <div class="flow-box apify">
+                Instagram Scraper Actor berjalan
+                <span class="flow-sub">Scrape komentar dari post URL di server Apify (~10-30 detik)</span>
+            </div>
+
+            <div class="flow-arrow"><div class="line"></div><div class="label">Return JSON array of comments</div><div class="line"></div><div class="head"></div></div>
+
+            <div class="flow-box backend">
+                scraper.py: Filter error items
+                <span class="flow-sub">Buang item dengan "error":"no_items", return komentar valid saja</span>
+            </div>
+
+            <div class="flow-arrow"><div class="line"></div><div class="head"></div></div>
+
+            <div class="flow-box backend">
+                monitor.py: Hash setiap comment ID
+                <span class="flow-sub mono">SHA-256("instagram|" + comment_id)[:16]</span>
+            </div>
+
+            <div class="flow-arrow"><div class="line"></div><div class="head"></div></div>
+
+            <div class="flow-box data">
+                Simpan SEMUA ke seen_comments.json
+                <span class="flow-sub">source: "baseline", is_baseline: true</span>
+            </div>
+
+            <div class="flow-arrow"><div class="line"></div><div class="label">TIDAK masuk new_comments.csv</div><div class="line"></div><div class="head"></div></div>
+
+            <div class="flow-box backend">
+                Mode berubah: IDLE &rarr; WARM-UP
+                <span class="flow-sub">Emit WebSocket "status_change" + "log" ke dashboard</span>
+            </div>
+
+            <div class="flow-arrow"><div class="line"></div><div class="head"></div></div>
+
+            <div class="flow-box frontend">
+                Dashboard update: "Baseline: N komentar tercatat"
+                <span class="flow-sub">Tombol Stabilkan & Mulai Monitoring aktif</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- ════════════════════════════════════════════════════ -->
+    <!-- SECTION 3: FULL FLOW — Run Once / Monitoring Cycle -->
+    <!-- ════════════════════════════════════════════════════ -->
+    <div class="section">
+        <div class="section-title">3. Alur Lengkap — Monitoring Cycle (Deteksi Komentar Baru)</div>
+
+        <div class="flow">
+            <div class="flow-box user">
+                User klik "Jalankan Sekarang" atau Timer 3 menit trigger
+            </div>
+
+            <div class="flow-arrow"><div class="line"></div><div class="label">POST /api/run-once</div><div class="line"></div><div class="head"></div></div>
+
+            <div class="flow-box backend">
+                Flask: Cek mode saat ini
+                <span class="flow-sub">Warm-up? &rarr; run_stabilize() | Official? &rarr; run_monitoring_cycle()</span>
+            </div>
+
+            <div class="flow-arrow"><div class="line"></div><div class="head"></div></div>
+
+            <div class="flow-box backend">
+                monitor.py &rarr; scraper.scrape_comments(limit=50)
+                <span class="flow-sub">Ambil komentar terbaru saja (hemat CU)</span>
+            </div>
+
+            <div class="flow-arrow"><div class="line"></div><div class="label">HTTP POST ke Apify API</div><div class="line"></div><div class="head"></div></div>
+
+            <div class="flow-box apify">
+                Apify jalankan actor &rarr; return ~15 komentar terbaru
+                <span class="flow-sub">Free tier: max ~15 | Paid tier: sesuai limit</span>
+            </div>
+
+            <div class="flow-arrow"><div class="line"></div><div class="label">JSON response</div><div class="line"></div><div class="head"></div></div>
+
+            <div class="flow-box backend">
+                Untuk SETIAP komentar: hitung hash &rarr; cek seen_comments.json
+            </div>
+
+            <div class="flow-arrow"><div class="line"></div><div class="head"></div></div>
+
+            <!-- DECISION -->
+            <div class="flow-box decision">
+                Apakah comment_hash sudah ada di seen_ids?
+            </div>
+
+            <!-- SPLIT -->
+            <div style="height:12px"></div>
+            <div class="flow-split">
+                <!-- YES branch -->
+                <div class="flow-branch">
+                    <div class="branch-label yes">SUDAH ADA</div>
+                    <div class="flow-box" style="border-color:var(--green-border); background:var(--green-light); color:var(--green);">
+                        SKIP (duplikat dicegah)
+                        <span class="flow-sub">duplicates_prevented += 1</span>
+                    </div>
+                </div>
+
+                <!-- NO branch -->
+                <div class="flow-branch">
+                    <div class="branch-label no">BELUM ADA (BARU!)</div>
+
+                    <div class="flow-box decision" style="border-color:var(--orange); max-width:260px;">
+                        Mode saat ini?
+                    </div>
+
+                    <div style="height:12px"></div>
+                    <div class="flow-split" style="gap:24px;">
+                        <!-- Warm-up path -->
+                        <div class="flow-branch">
+                            <div class="branch-label" style="background:var(--orange-light); color:var(--orange);">WARM-UP</div>
+                            <div class="flow-box data" style="max-width:180px;">
+                                Tambah ke seen_ids
+                                <span class="flow-sub">source: "warmup"<br>is_baseline: true</span>
+                            </div>
+                            <div style="height:8px"></div>
+                            <div class="flow-box" style="border-color:var(--red-border); background:var(--red-light); color:var(--red); max-width:180px; font-weight:800;">
+                                TIDAK masuk CSV
+                            </div>
+                        </div>
+
+                        <!-- Official path -->
+                        <div class="flow-branch">
+                            <div class="branch-label" style="background:var(--green-light); color:var(--green);">OFFICIAL</div>
+                            <div class="flow-box data" style="max-width:180px;">
+                                Tambah ke seen_ids
+                                <span class="flow-sub">source: "official"<br>is_baseline: false</span>
+                            </div>
+                            <div style="height:8px"></div>
+                            <div class="flow-box" style="border-color:var(--green-border); background:var(--green-light); color:var(--green); max-width:180px; font-weight:800;">
+                                MASUK new_comments.csv
+                            </div>
+                            <div style="height:8px"></div>
+                            <div class="flow-box frontend" style="max-width:180px;">
+                                WebSocket emit
+                                <span class="flow-sub">Dashboard tampilkan komentar baru</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div style="height:24px"></div>
+
+            <div class="flow-box backend">
+                Log siklus ke monitoring_log.csv
+                <span class="flow-sub">cycle, scraped, new_found, duplicates, status</span>
+            </div>
+
+            <div class="flow-arrow"><div class="line"></div><div class="head"></div></div>
+
+            <div class="flow-box frontend">
+                Dashboard update: analytics, chart, tabel komentar
+                <span class="flow-sub">Countdown reset &rarr; tunggu 3 menit &rarr; ulang siklus</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- ════════════════════════════════════════════════════ -->
+    <!-- SECTION 4: Architecture Stack -->
+    <!-- ════════════════════════════════════════════════════ -->
+    <div class="section">
+        <div class="section-title">4. Technology Stack</div>
+
+        <div style="display:flex; gap:16px; flex-wrap:wrap; justify-content:center;">
+            <div class="flow-box user" style="min-width:200px;">
+                <strong>Frontend (Browser)</strong>
+                <span class="flow-sub">HTML + CSS + JavaScript<br>Socket.IO Client<br>Chart.js<br>Lucide Icons</span>
+            </div>
+            <div style="display:flex; align-items:center; color:var(--gray); font-size:1.2rem;">&harr;</div>
+            <div class="flow-box backend" style="min-width:200px;">
+                <strong>Backend (Python)</strong>
+                <span class="flow-sub">Flask + Flask-SocketIO<br>config.py | scraper.py<br>monitor.py | app.py</span>
+            </div>
+            <div style="display:flex; align-items:center; color:var(--gray); font-size:1.2rem;">&harr;</div>
+            <div class="flow-box apify" style="min-width:200px;">
+                <strong>Apify Cloud</strong>
+                <span class="flow-sub">REST API v2<br>Actor: instagram-scraper<br>Token rotation (3 akun)</span>
+            </div>
+            <div style="display:flex; align-items:center; color:var(--gray); font-size:1.2rem;">&harr;</div>
+            <div class="flow-box data" style="min-width:200px;">
+                <strong>Data Storage</strong>
+                <span class="flow-sub">seen_comments.json<br>new_comments.csv<br>monitoring_log.csv</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- ════════════════════════════════════════════════════ -->
+    <!-- LEGEND -->
+    <!-- ════════════════════════════════════════════════════ -->
+    <div class="legend">
+        <div class="legend-item">
+            <div class="legend-dot" style="background:var(--blue-light); border-color:var(--blue-border);"></div>
+            User / Browser
+        </div>
+        <div class="legend-item">
+            <div class="legend-dot" style="background:var(--purple-light); border-color:var(--purple);"></div>
+            Frontend (JS)
+        </div>
+        <div class="legend-item">
+            <div class="legend-dot" style="background:var(--red-light); border-color:var(--red-border);"></div>
+            Backend (Python)
+        </div>
+        <div class="legend-item">
+            <div class="legend-dot" style="background:var(--green-light); border-color:var(--green-border);"></div>
+            Apify API
+        </div>
+        <div class="legend-item">
+            <div class="legend-dot" style="background:var(--orange-light); border-color:var(--orange-border);"></div>
+            Data Storage
+        </div>
+    </div>
+
+    <div style="text-align:center; margin-top:48px; padding:20px; color:var(--gray); font-size:0.75rem; border-top:1px solid var(--gray-border);">
+        SurabayaSambat v2 &mdash; Penelitian Monitoring Keluhan Warga Surabaya &mdash; System Architecture Diagram
+    </div>
+
+</body>
+</html>

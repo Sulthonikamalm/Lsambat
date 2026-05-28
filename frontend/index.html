@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SurabayaSambat v2 — Live Comment Monitor</title>
+    
+    <!-- Typography: Plus Jakarta Sans & JetBrains Mono -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- CSS Stylesheet -->
+    <link rel="stylesheet" href="css/style.css">
+    
+    <!-- Chart.js and Socket.io -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
+    <script src="https://cdn.socket.io/4.7.5/socket.io.min.js"></script>
+    
+    <!-- Lucide Icons CDN -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+<body>
+
+    <!-- TOAST NOTIFICATION CONTAINER -->
+    <div class="toast-container" id="toastContainer" aria-live="polite"></div>
+
+    <!-- CUSTOM CONFIRMATION MODAL -->
+    <div class="modal-overlay" id="customModal" role="dialog" aria-modal="true" aria-hidden="true">
+        <div class="modal-card">
+            <div class="modal-icon">
+                <i data-lucide="alert-triangle"></i>
+            </div>
+            <h3 class="modal-title" id="modalTitle">Konfirmasi Aksi</h3>
+            <p class="modal-desc" id="modalDesc">Apakah Anda yakin ingin melakukan tindakan ini? Semua data saat ini akan dihapus permanen.</p>
+            <div class="modal-actions">
+                <button class="btn btn-outline" id="modalCancel">Batal</button>
+                <button class="btn btn-red" id="modalConfirm">Ya, Reset</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- NAVBAR HEADER -->
+    <nav class="navbar">
+        <div class="navbar-inner">
+            <div class="brand-wrapper">
+                <div class="brand-logo">
+                    <i data-lucide="radio" class="logo-pulse"></i>
+                </div>
+                <div>
+                    <h1 class="navbar-title">SurabayaSambat <span class="badge-v2">v2</span></h1>
+                    <p class="navbar-sub">Sistem Monitoring Komentar Instagram — Panel Penelitian</p>
+                </div>
+            </div>
+            <div class="mode-badge-wrap">
+                <span class="mode-pulse-dot" id="modePulseDot"></span>
+                <span class="mode-badge" id="modeBadge">Idle</span>
+            </div>
+        </div>
+    </nav>
+
+    <!-- MAIN BODY CONTAINER -->
+    <main class="container">
+
+        <!-- METRICS METRICS METRICS -->
+        <div class="metrics-grid">
+            <div class="metric-card" tabindex="0">
+                <div class="metric-icon metric-icon-red">
+                    <i data-lucide="database"></i>
+                </div>
+                <div class="metric-info">
+                    <strong class="metric-val" id="statBaseline">0</strong>
+                    <span class="metric-label">Total Terkumpul</span>
+                </div>
+            </div>
+            <div class="metric-card" tabindex="0">
+                <div class="metric-icon metric-icon-green">
+                    <i data-lucide="message-square"></i>
+                </div>
+                <div class="metric-info">
+                    <strong class="metric-val" id="statNew">0</strong>
+                    <span class="metric-label">Komentar Baru</span>
+                </div>
+            </div>
+            <div class="metric-card" tabindex="0">
+                <div class="metric-icon metric-icon-blue">
+                    <i data-lucide="shield-check"></i>
+                </div>
+                <div class="metric-info">
+                    <strong class="metric-val" id="statDup">0</strong>
+                    <span class="metric-label">Duplikat Dicegah</span>
+                </div>
+            </div>
+            <div class="metric-card" tabindex="0">
+                <div class="metric-icon metric-icon-orange">
+                    <i data-lucide="refresh-cw"></i>
+                </div>
+                <div class="metric-info">
+                    <strong class="metric-val" id="statCycle">0</strong>
+                    <span class="metric-label">Total Siklus</span>
+                </div>
+            </div>
+            <div class="metric-card" tabindex="0">
+                <div class="metric-icon metric-icon-purple">
+                    <i data-lucide="activity"></i>
+                </div>
+                <div class="metric-info">
+                    <strong class="metric-val" id="statApi">0</strong>
+                    <span class="metric-label">Panggilan API</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- CONTROL PANEL & STEP GUIDE -->
+        <section class="step-guide panel-glass">
+            <div class="step-guide-header">
+                <div class="panel-title-group">
+                    <i data-lucide="sliders" class="panel-icon"></i>
+                    <h2>Kontrol Monitoring Keluhan</h2>
+                </div>
+            </div>
+                
+            <!-- Modern Connected Stepper Timeline (Centered) -->
+            <div class="stepper-timeline-wrap">
+                <div class="stepper-timeline" id="stepIndicators" role="progressbar" aria-label="Alur pemantauan data">
+                    <div class="step-item active" id="step1">
+                        <span class="step-circle">1</span>
+                        <span class="step-text">Kumpulkan Data</span>
+                    </div>
+                    <div class="step-divider"></div>
+                    <div class="step-item" id="step2">
+                        <span class="step-circle">2</span>
+                        <span class="step-text">Live Monitor</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="step-guide-body">
+                <!-- Step flow buttons (Equal Size modern grid layout) -->
+                <div class="step-buttons-grid">
+                    <button class="btn btn-red btn-icon-gap btn-step-action" id="btnCollect" onclick="doCollect()">
+                        <i data-lucide="database"></i>
+                        <span>1. Kumpulkan Data Awal</span>
+                    </button>
+                    <button class="btn btn-green btn-icon-gap btn-step-action" id="btnStart" onclick="doStartMonitoring()" disabled>
+                        <i data-lucide="radio"></i>
+                        <span>2. Mulai Monitoring</span>
+                    </button>
+                </div>
+
+                <!-- Status message block with styled info icon -->
+                <div class="status-msg-wrapper">
+                    <div class="status-msg-icon">
+                        <i data-lucide="info" id="statusIcon"></i>
+                    </div>
+                    <div class="status-msg" id="statusMsg" role="status">
+                        Klik "Kumpulkan Data Awal" untuk mengambil semua komentar yang ada di postingan.
+                    </div>
+                </div>
+
+                <!-- Main aligned actions row: Run / Stop / Download / Reset -->
+                <div class="action-bar">
+                    <div class="action-left-group">
+                        <button class="btn btn-red btn-icon-gap" id="btnRun" onclick="doRunOnce()" disabled>
+                            <i data-lucide="zap"></i>
+                            <span>Jalankan Sekarang</span>
+                        </button>
+                        <button class="btn btn-outline btn-icon-gap btn-stop" id="btnStop" onclick="doStop()" disabled>
+                            <i data-lucide="square"></i>
+                            <span>Hentikan</span>
+                        </button>
+                        <button class="btn btn-outline btn-icon-gap btn-download" id="btnDownload" onclick="doDownload()" disabled>
+                            <i data-lucide="download"></i>
+                            <span>Unduh Dataset (CSV)</span>
+                        </button>
+                    </div>
+                    
+                    <div class="action-right-group">
+                        <div class="countdown-inline" id="countdownWrap" style="display:none;">
+                            <i data-lucide="clock" class="countdown-clock-icon"></i>
+                            <span class="countdown-label">Siklus Berikutnya</span>
+                            <span class="timer" id="countdownTimer">00:00</span>
+                        </div>
+                        <button class="btn btn-outline btn-icon-gap btn-reset" id="btnReset" onclick="doReset()">
+                            <i data-lucide="rotate-ccw"></i>
+                            <span>Reset</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- TWO COLUMNS: Log + Chart -->
+        <div class="two-col">
+            <!-- Activity Log Terminal -->
+            <section class="panel-glass console-panel">
+                <div class="panel-header">
+                    <div class="panel-title-group">
+                        <div class="terminal-dots">
+                            <span class="dot red"></span>
+                            <span class="dot yellow"></span>
+                            <span class="dot green"></span>
+                        </div>
+                        <span>Console Log Aktivitas</span>
+                    </div>
+                    <div class="terminal-actions">
+                        <button class="terminal-btn-icon" onclick="clearLocalLogs()" title="Bersihkan log di layar" aria-label="Bersihkan log di layar">
+                            <i data-lucide="trash-2"></i>
+                        </button>
+                    </div>
+                </div>
+                <div class="panel-body console-body">
+                    <div class="log-container" id="logContainer">
+                        <div class="log-empty">
+                            <i data-lucide="terminal" class="empty-icon"></i>
+                            <p>Belum ada aktivitas monitoring tercatat.</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Chart -->
+            <section class="panel-glass chart-panel">
+                <div class="panel-header">
+                    <div class="panel-title-group">
+                        <i data-lucide="bar-chart-3" class="panel-icon"></i>
+                        <span>Statistik Temuan per Siklus</span>
+                    </div>
+                </div>
+                <div class="panel-body chart-body">
+                    <div class="chart-wrapper">
+                        <canvas id="cycleChart"></canvas>
+                    </div>
+                </div>
+            </section>
+        </div>
+
+        <!-- DATA TABLE: Komentar Baru -->
+        <section class="panel-glass table-panel">
+            <div class="panel-header table-header-flex">
+                <div class="panel-title-group">
+                    <i data-lucide="table" class="panel-icon"></i>
+                    <h2>Dataset Komentar Terdeteksi</h2>
+                    <span class="count-badge" id="tableBadge">0</span>
+                </div>
+            </div>
+            <div class="panel-body">
+                <div class="data-table-wrap">
+                    <table class="data-table" id="dataTable">
+                        <thead>
+                            <tr>
+                                <th scope="col" style="width: 60px;">No</th>
+                                <th scope="col" style="width: 180px;">Username</th>
+                                <th scope="col">Komentar</th>
+                                <th scope="col" style="width: 180px;">Waktu Kirim</th>
+                                <th scope="col" style="width: 180px;">Waktu Terdeteksi</th>
+                                <th scope="col" style="width: 100px; text-align: center;">Siklus</th>
+                            </tr>
+                        </thead>
+                        <tbody id="dataBody">
+                            <tr>
+                                <td colspan="6" class="table-empty">
+                                    <div class="table-empty-graphic">
+                                        <i data-lucide="inbox" class="empty-icon"></i>
+                                        <p class="empty-title">Belum Ada Komentar Baru</p>
+                                        <p class="empty-subtitle">Data komentar keluhan warga baru akan tercantum di sini setelah sistem monitoring aktif dan mendeteksi komentar baru secara real-time.</p>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- FOOTER SECTION -->
+    <footer class="footer">
+        <div class="footer-left">
+            <span class="footer-title">SurabayaSambat v2</span>
+            <span class="footer-desc">Proyek Penelitian Deteksi &amp; Visualisasi Real-Time Keluhan Warga Surabaya</span>
+        </div>
+        <div class="footer-right">
+            <span class="footer-tag">Demo Mode</span>
+            <span class="footer-divider">&middot;</span>
+            <span class="footer-interval-wrap">Interval Pemeriksaan: <strong id="footerInterval">40</strong> detik</span>
+        </div>
+    </footer>
+
+    <!-- Core App JS script -->
+    <script src="js/app.js"></script>
+    <script>
+        // Initialize Lucide icons on page load
+        document.addEventListener("DOMContentLoaded", function() {
+            lucide.createIcons();
+        });
+        
+        // Helper to clear frontend console log visualization
+        function clearLocalLogs() {
+            const container = document.getElementById("logContainer");
+            container.innerHTML = `
+                <div class="log-empty">
+                    <i data-lucide="terminal" class="empty-icon"></i>
+                    <p>Belum ada aktivitas monitoring tercatat.</p>
+                </div>
+            `;
+            lucide.createIcons();
+            if (typeof showToast === 'function') {
+                showToast("Console log pada browser dibersihkan.", "info");
+            }
+        }
+    </script>
+</body>
+</html>

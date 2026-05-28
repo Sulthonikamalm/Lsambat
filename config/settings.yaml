@@ -1,0 +1,24 @@
+project:
+  name: "SurabayaSambat v2 - Live Comment Monitor Demo"
+
+target:
+  post_url: "https://www.instagram.com/p/DYrGrMOBz7h/"
+
+apify:
+  actor_id: "apify/instagram-scraper"
+  token_envs:
+    - "APIFY_TOKEN_1"
+    - "APIFY_TOKEN_2"
+    - "APIFY_TOKEN_3"
+  baseline_results_limit: 1000
+  monitoring_results_limit: 50
+  request_timeout_seconds: 300
+
+monitoring:
+  interval_seconds: 40
+  auto_start: false
+
+output:
+  seen_comments: "data/seen_comments.json"
+  new_comments_csv: "data/new_comments.csv"
+  monitoring_log_csv: "data/monitoring_log.csv"
