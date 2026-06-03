@@ -1,8 +1,5 @@
 project:
-  name: "SurabayaSambat v2 - Live Comment Monitor Demo"
-
-target:
-  post_url: "https://www.instagram.com/p/DYrGrMOBz7h/"
+  name: "SurabayaSambat v2 - Monitoring Keluhan Masyarakat Surabaya"
 
 apify:
   actor_id: "apify/instagram-scraper"
@@ -10,15 +7,109 @@ apify:
     - "APIFY_TOKEN_1"
     - "APIFY_TOKEN_2"
     - "APIFY_TOKEN_3"
-  baseline_results_limit: 1000
-  monitoring_results_limit: 50
   request_timeout_seconds: 300
+  estimated_cost_per_call: 0.032     # estimasi biaya USD per API call Apify
 
-monitoring:
-  interval_seconds: 40
-  auto_start: false
+# Jadwal scraping otomatis
+schedule:
+  auto_scrape_day: "monday"          # hari scraping otomatis (monday-sunday)
+  auto_scrape_hour: 8                # jam scraping (08:00 WIB)
+  auto_scrape_enabled: false         # ON/OFF sistem (diubah via dashboard)
+
+# Rate limiting — batasan scraping per minggu (timestep budget)
+rate_limit:
+  max_scrapes_per_week: 4            # total maks scraping per minggu
+  budget_tiers:
+    # Tier 1: scraping otomatis mingguan (full scan)
+    - tier: 1
+      posts_per_source: 10
+      comments_per_post: 100
+    # Tier 2: scraping manual tambahan pertama
+    - tier: 2
+      posts_per_source: 5
+      comments_per_post: 100
+    # Tier 3: scraping manual tambahan kedua (lebih ketat)
+    - tier: 3
+      posts_per_source: 2
+      comments_per_post: 50
+    # Tier 4+: ditolak
+
+# Skor relevansi postingan — multi-faktor transparan
+relevance:
+  keywords:
+    - "banjir"
+    - "jalan rusak"
+    - "macet"
+    - "kemacetan"
+    - "sampah"
+    - "pdam"
+    - "air mati"
+    - "lampu jalan"
+    - "pju"
+    - "drainase"
+    - "parkir"
+    - "parkir liar"
+    - "trotoar"
+    - "pelayanan"
+    - "puskesmas"
+    - "pemkot"
+    - "dishub"
+    - "dlh"
+    - "bpbd"
+    - "wargaku"
+    - "keluhan"
+    - "lapor"
+    - "tolong"
+    - "rusak"
+    - "lubang"
+    - "genangan"
+    - "pohon tumbang"
+    - "limbah"
+    - "bau"
+    - "polusi"
+    - "maling"
+    - "pencurian"
+    - "rawan"
+    - "listrik mati"
+    - "padam"
+    - "aduan"
+    - "hotline"
+    - "jukir"
+    - "liar"
+    - "bangunan liar"
+    - "pembongkaran"
+    - "penertiban"
+  thresholds:
+    high: 60                         # skor >= 60 = TINGGI
+    medium: 30                       # skor 30-59 = SEDANG
+    # skor < 30 = RENDAH
+  weights:
+    keyword_per_match: 10            # poin per keyword cocok
+    keyword_max: 40                  # maks poin keyword
+    priority_level_1: 25             # poin untuk akun prioritas 1
+    priority_level_2: 15             # poin untuk akun prioritas 2
+    priority_level_3: 5              # poin untuk akun prioritas 3
+    engagement_50_plus: 20           # poin untuk >= 50 komentar
+    engagement_20_plus: 15           # poin untuk >= 20 komentar
+    engagement_5_plus: 10            # poin untuk >= 5 komentar
+    recency_7_days: 15               # poin untuk postingan <= 7 hari
+    recency_14_days: 10              # poin untuk postingan <= 14 hari
+    recency_30_days: 5               # poin untuk postingan <= 30 hari
+
+# Stage 4: Multi-account post discovery + queue
+post_discovery:
+  max_posts_per_source: 10
+  only_active_sources: true
+  use_monitoring_window: true        # onlyPostsNewerThan = today - monitoring_window_days
+  comments_per_post: 100             # limit komentar per post saat proses antrean
+  queue_only_relevant: true          # hanya queue postingan high/medium (hemat API call)
+  min_comment_increase: 5            # minimal kenaikan komentar untuk re-queue postingan lama
 
 output:
-  seen_comments: "data/seen_comments.json"
-  new_comments_csv: "data/new_comments.csv"
-  monitoring_log_csv: "data/monitoring_log.csv"
+  data_dir: "data"
+  source_registry: "data/source_registry.csv"
+  raw_posts_csv: "data/raw_instagram_posts.csv"
+  post_queue_csv: "data/post_queue.csv"
+  raw_comments_csv: "data/raw_comments.csv"
+  api_usage_log: "data/api_usage_log.json"
+  scrape_history: "data/scrape_history.json"

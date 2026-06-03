@@ -3,6 +3,9 @@ __pycache__/
 *.pyc
 data/*.json
 data/*.csv
+# source_registry.csv adalah input (daftar akun) — tetap di-track
+!data/source_registry.csv
+data/_archive/
 .vscode/
 venv/
 .idea/

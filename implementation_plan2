@@ -1,0 +1,248 @@
+# Pembenahan Business Logic Layer Scraping — Implementation Plan
+
+---
+
+## Problem Statement
+
+Layer scraping saat ini punya **2 jalur paralel** yang tidak saling terhubung dan menggunakan logic berbeda:
+
+```
+JALUR A (monitor.py) — Monitoring 1-URL
+  scraper.scrape_comments() → _make_hash()[:16] → _extract_comment_data() → new_comments.csv
+  Format hash: SHA-256 truncated 16 char
+  Format timestamp: ISO (.isoformat())
+  Schema: comment_id_hash, comment_id, post_url, username, comment_text, comment_timestamp, detected_at, cycle_number, source
+
+JALUR B (Stage 4) — Multi-Account Discovery
+  scraper.scrape_profile_posts() → normalize_post_item() → raw_instagram_posts.csv
+  scraper.scrape_comments() → _normalize_comment() → raw_comments.csv
+  Format hash: SHA-256 FULL 64 char
+  Format timestamp: strftime("%Y-%m-%dT%H:%M:%SZ")
+  Schema: comment_id_hash, comment_id, post_id_hash, post_url, post_shortcode, source_account, comment_text, comment_created_at, scraped_at, queue_id, scraping_status
+```
+
+> [!WARNING]
+> **Masalah utama**: Dua jalur ini menghasilkan **hash ID yang berbeda untuk komentar yang sama**, **timestamp format berbeda**, dan **CSV schema berbeda**. Komentar yang discrape di jalur A tidak bisa dicocokkan dengan jalur B, dan sebaliknya.
+
+---
+
+## 8 Business Logic yang Belum Dikembangkan
+
+### 1. 🔴 Dual Hash System — Data Integrity Risk
+
+| | monitor.py `_make_hash()` | stage4_utils `make_sha256()` |
+|---|---|---|
+| **Output** | `hexdigest()[:16]` (16 char) | `hexdigest()` (64 char) |
+| **Collision risk** | Lebih tinggi (truncated) | Rendah |
+| **Fallback tanpa ID** | `instagram\|{owner}\|{text}` | `instagram\|{post_url}\|{text}\|{created_at}` |
+| **Lokasi** | [monitor.py:60-70](file:///c:/Documents/KULIAH/SEMESTER%206/PROJECT/PENELITIANPAKKAMAL/SURABAYASAMBAT/surabayasambat_scraper%20instagram/surabayasambat_demo_monitoring/backend/monitor.py#L60-L70) | [stage4_utils.py:22-23](file:///c:/Documents/KULIAH/SEMESTER%206/PROJECT/PENELITIANPAKKAMAL/SURABAYASAMBAT/surabayasambat_scraper%20instagram/surabayasambat_demo_monitoring/backend/stage4_utils.py#L22-L23) |
+
+**Dampak**: Komentar yang sama di-hash berbeda oleh dua jalur → duplikat di dataset akhir tidak terdeteksi.
+
+---
+
+### 2. 🔴 Dual Timestamp Format
+
+| | monitor.py `_now_iso()` | stage4_utils `now_utc()` |
+|---|---|---|
+| **Format** | `2026-06-03T08:25:00.123456+00:00` | `2026-06-03T08:25:00Z` |
+| **Microseconds** | ✅ Ada | ❌ Tidak ada |
+| **Timezone** | `+00:00` | `Z` |
+| **Lokasi** | [monitor.py:55-57](file:///c:/Documents/KULIAH/SEMESTER%206/PROJECT/PENELITIANPAKKAMAL/SURABAYASAMBAT/surabayasambat_scraper%20instagram/surabayasambat_demo_monitoring/backend/monitor.py#L55-L57) | [stage4_utils.py:18-19](file:///c:/Documents/KULIAH/SEMESTER%206/PROJECT/PENELITIANPAKKAMAL/SURABAYASAMBAT/surabayasambat_scraper%20instagram/surabayasambat_demo_monitoring/backend/stage4_utils.py#L18-L19) |
+
+**Dampak**: Sorting/filtering by timestamp tidak konsisten antara data Jalur A dan B.
+
+---
+
+### 3. 🔴 Dual Comment Extraction (Schema Mismatch)
+
+| Field | monitor.py `_extract_comment_data()` | process_queue.py `_normalize_comment()` |
+|---|---|---|
+| hash | `comment_id_hash` (truncated) | `comment_id_hash` (full) |
+| post identifier | `post_url` saja | `post_id_hash` + `post_url` + `post_shortcode` |
+| source info | ❌ Tidak ada | `source_account` |
+| queue info | ❌ Tidak ada | `queue_id`, `scraping_status` |
+| username field | `username` | ❌ Tidak ada |
+| Candidate fields | 3-4 candidates per field | 5-6 candidates (lebih robust) |
+
+**Dampak**: Data dari Jalur A dan B punya kolom berbeda → tidak bisa di-merge jadi satu dataset terpadu.
+
+---
+
+### 4. 🟡 Relevance Scoring Naif (Keyword-Only)
+
+[`_determine_post_relevance()`](file:///c:/Documents/KULIAH/SEMESTER%206/PROJECT/PENELITIANPAKKAMAL/SURABAYASAMBAT/surabayasambat_scraper%20instagram/surabayasambat_demo_monitoring/backend/discover_posts.py#L227-L241) saat ini:
+
+```python
+def _determine_post_relevance(caption, priority_level):
+    if any(kw in caption_lower for kw in CITY_ISSUE_KEYWORDS):
+        return "high"        # ← hanya cek apakah keyword ada
+    if int(priority_level) <= 1:
+        return "medium"      # ← hanya berdasarkan priority level akun
+    return "low"
+```
+
+**Yang belum dikembangkan**:
+- Tidak mempertimbangkan **jumlah keyword** yang match (1 keyword = sama dengan 5 keyword)
+- Tidak mempertimbangkan **comment_count** (post dengan 100 komentar sama dengan 0 komentar)
+- Tidak ada **bobot per kategori** (banjir ≠ parkir secara urgensi)
+- Tidak ada **temporal scoring** (keluhan baru vs lama)
+- Keyword list di-hardcode, bukan dari config
+
+---
+
+### 5. 🟡 Tidak Ada Token Failover
+
+[`scrape_comments()`](file:///c:/Documents/KULIAH/SEMESTER%206/PROJECT/PENELITIANPAKKAMAL/SURABAYASAMBAT/surabayasambat_scraper%20instagram/surabayasambat_demo_monitoring/backend/scraper.py#L37-L145) saat ini:
+
+```python
+token = self._next_token()   # round-robin, pilih 1 token
+resp = requests.post(...)     # panggil Apify
+if resp.status_code == 402:   # quota exceeded
+    result["api_status"] = "quota_exceeded"
+    return result             # ← LANGSUNG RETURN, tidak coba token lain
+```
+
+**Yang belum dikembangkan**: Ketika token pertama quota exceeded (402), seharusnya auto-retry dengan token berikutnya. Saat ini langsung gagal.
+
+---
+
+### 6. 🟡 CSV Write Tidak Thread-Safe
+
+[`_append_csv()`](file:///c:/Documents/KULIAH/SEMESTER%206/PROJECT/PENELITIANPAKKAMAL/SURABAYASAMBAT/surabayasambat_scraper%20instagram/surabayasambat_demo_monitoring/backend/monitor.py#L450-L465) di monitor.py:
+
+```python
+def _append_csv(self, comments: list):
+    csv_path = self.paths["new_comments_csv"]
+    file_exists = csv_path.exists() and csv_path.stat().st_size > 0
+    with open(csv_path, "a", ...) as f:    # ← no lock!
+        writer = csv.DictWriter(f, ...)
+        if not file_exists:
+            writer.writeheader()
+        for comment in comments:
+            writer.writerow(row)
+```
+
+**Masalah**: Background monitoring thread dan manual "Run Once" bisa race condition saat menulis ke CSV yang sama.
+
+---
+
+### 7. 🟡 Monitor ↔ Stage 4 Data Silo
+
+Saat ini kedua jalur menghasilkan **file CSV terpisah** yang tidak saling tahu:
+
+| Data | Jalur A (monitor.py) | Jalur B (Stage 4) |
+|---|---|---|
+| Komentar | `new_comments.csv` | `raw_comments.csv` |
+| Dedup state | `seen_comments.json` | Check di `raw_comments.csv` |
+| Post info | `post_url` satu hardcoded | `raw_instagram_posts.csv` |
+
+**Dampak**: Komentar yang sudah di-scrape oleh Stage 4 bisa di-scrape ulang oleh Monitor (dan sebaliknya) karena tidak ada shared dedup.
+
+---
+
+### 8. 🟡 Tidak Ada Validasi Data Apify
+
+Raw data dari Apify diterima apa adanya tanpa validasi:
+- Tidak ada pengecekan tipe data (`comment_id` bisa int/str/None)
+- Tidak ada pengecekan `text` kosong vs whitespace-only
+- Tidak ada sanitasi karakter khusus yang bisa corrupt CSV
+- Tidak ada max-length enforcement pada `comment_text`
+
+---
+
+## Proposed Changes — 4 Tahap
+
+### Tahap 1: Unifikasi Core Utils
+
+Buat satu module `backend/utils.py` yang menjadi **single source of truth** untuk semua fungsi bersama.
+
+#### [NEW] backend/utils.py
+- Pindahkan dan unifikasi: `make_hash()`, `now_utc()`, `extract_value_by_candidates()`, `safe_json_dumps()`, `load_csv_if_exists()`, `normalize_url()`, `url_shortcode()`, `safe_write_csv()`
+- Hash: gunakan SHA-256 full 64 char (migrasi dari truncated)
+- Timestamp: gunakan format ISO-8601 standar `YYYY-MM-DDTHH:MM:SSZ`
+- Tambah: `validate_comment_data()`, `sanitize_text()`
+
+#### [MODIFY] backend/stage4_utils.py
+- Hapus semua fungsi yang sudah di-pindah ke `utils.py`
+- File ini menjadi import-only re-export (backward compat) atau dihapus
+
+#### [MODIFY] backend/monitor.py
+- Ganti `_make_hash()` dan `_now_iso()` → import dari `utils.py`
+- Ganti `_extract_comment_data()` → gunakan fungsi unified dari `utils.py`
+
+---
+
+### Tahap 2: Unified Comment Schema
+
+Buat satu schema komentar yang dipakai oleh kedua jalur.
+
+#### [NEW] backend/comment_schema.py
+- Definisi `UNIFIED_COMMENT_COLUMNS` yang menggabungkan field terbaik dari kedua jalur
+- Fungsi `normalize_apify_comment(raw_item, context)` — **satu fungsi** normalisasi komentar untuk semua jalur
+- Fungsi `validate_comment(data)` — validasi wajib sebelum simpan
+
+#### [MODIFY] backend/monitor.py
+- `_extract_comment_data()` → diganti `normalize_apify_comment()`
+- Tambah field `source_account`, `post_shortcode` ke output
+
+#### [MODIFY] backend/process_queue.py
+- `_normalize_comment()` → diganti `normalize_apify_comment()`
+- Hapus duplikasi COMMENT_*_CANDIDATES (pindah ke schema)
+
+---
+
+### Tahap 3: Perbaikan Business Logic Scraper
+
+#### [MODIFY] backend/scraper.py
+- Tambah **token failover**: jika 402, otomatis coba token berikutnya (max 1 retry per token)
+- Tambah **response validation**: pastikan response JSON valid, items punya minimal field yang diperlukan
+
+#### [MODIFY] backend/discover_posts.py
+- Refactor `_determine_post_relevance()`:
+  - Pindahkan keyword list ke `config/settings.yaml`
+  - Hitung **keyword match count** (weighted)
+  - Pertimbangkan `comment_count` sebagai faktor
+  - Pertimbangkan recency (umur post)
+  - Output: skor numerik 0-100 + label (high/medium/low)
+
+#### [MODIFY] backend/monitor.py
+- Tambah `threading.Lock` pada `_append_csv()` dan `_save_state()`
+- Tambah `_load_state()` error recovery (backup file)
+
+---
+
+### Tahap 4: Shared Dedup & Data Integration
+
+#### [MODIFY] backend/monitor.py + backend/process_queue.py
+- Shared dedup: gunakan satu `seen_comments.json` atau SQLite table untuk **semua komentar** dari kedua jalur
+- Ketika Stage 4 scrape komentar, update juga `seen_ids` di monitor
+- Ketika Monitor scrape komentar, ID-nya juga dicek terhadap `raw_comments.csv`
+
+---
+
+## Open Questions
+
+> [!IMPORTANT]
+> Sebelum eksekusi, mohon konfirmasi:
+
+1. **Data existing di `new_comments.csv`**: Apakah data yang sudah terkumpul (hash truncated) perlu di-migrasi ke hash full, atau kita reset dan mulai fresh?
+
+2. **Merge dua CSV menjadi satu**: Apakah `new_comments.csv` dan `raw_comments.csv` sebaiknya **digabung jadi satu file** (`all_comments.csv`) dengan schema unified, atau tetap terpisah?
+
+3. **Scope relevance scoring**: Apakah `_determine_post_relevance()` cukup diperbaiki di level ini (keyword + comment_count + recency), atau kita langsung siapkan placeholder untuk NLP scoring di tahap berikutnya?
+
+---
+
+## Verification Plan
+
+### Automated Tests
+- `python tests/acceptance_stage4.py` — semua 9 skenario tetap PASS
+- Tambah test baru: `test_unified_hash_consistency` — pastikan hash sama untuk komentar yang sama di kedua jalur
+- Tambah test baru: `test_token_failover` — 402 pada token 1 → otomatis coba token 2
+- Tambah test baru: `test_thread_safe_csv` — concurrent write tidak corrupt file
+
+### Manual Verification
+- Dashboard tetap berjalan di `localhost:5000`
+- Collect → Monitor → Stage 4 Discover → Process Queue semua berfungsi
+- Data di CSV konsisten (hash format, timestamp format, schema)

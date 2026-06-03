@@ -41,9 +41,14 @@ def get_apify_tokens(settings: dict) -> list:
 
 def get_paths(settings: dict) -> dict:
     """Resolve semua path output relatif terhadap PROJECT_ROOT."""
+    out = settings.get("output", {})
     return {
-        "seen_comments": PROJECT_ROOT / settings["output"]["seen_comments"],
-        "new_comments_csv": PROJECT_ROOT / settings["output"]["new_comments_csv"],
-        "monitoring_log_csv": PROJECT_ROOT / settings["output"]["monitoring_log_csv"],
-        "data_dir": PROJECT_ROOT / "data",
+        "data_dir": PROJECT_ROOT / out.get("data_dir", "data"),
+        "source_registry": PROJECT_ROOT / out.get("source_registry", "data/source_registry.csv"),
+        "raw_posts_csv": PROJECT_ROOT / out.get("raw_posts_csv", "data/raw_instagram_posts.csv"),
+        "post_queue_csv": PROJECT_ROOT / out.get("post_queue_csv", "data/post_queue.csv"),
+        "raw_comments_csv": PROJECT_ROOT / out.get("raw_comments_csv", "data/raw_comments.csv"),
+        "api_usage_log": PROJECT_ROOT / out.get("api_usage_log", "data/api_usage_log.json"),
+        "scrape_history": PROJECT_ROOT / out.get("scrape_history", "data/scrape_history.json"),
     }
+

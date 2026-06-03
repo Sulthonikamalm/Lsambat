@@ -3,7 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SurabayaSambat v2 — Live Comment Monitor</title>
+    <title>SurabayaSambat v2 — Monitoring Keluhan Masyarakat Surabaya</title>
+    <meta name="description" content="Dashboard monitoring dan analisis keluhan masyarakat Surabaya berbasis komentar Instagram.">
     
     <!-- Typography: Plus Jakarta Sans & JetBrains Mono -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -32,10 +33,35 @@
                 <i data-lucide="alert-triangle"></i>
             </div>
             <h3 class="modal-title" id="modalTitle">Konfirmasi Aksi</h3>
-            <p class="modal-desc" id="modalDesc">Apakah Anda yakin ingin melakukan tindakan ini? Semua data saat ini akan dihapus permanen.</p>
+            <p class="modal-desc" id="modalDesc">Apakah Anda yakin?</p>
             <div class="modal-actions">
                 <button class="btn btn-outline" id="modalCancel">Batal</button>
-                <button class="btn btn-red" id="modalConfirm">Ya, Reset</button>
+                <button class="btn btn-red" id="modalConfirm">Ya, Lanjutkan</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ADD SOURCE MODAL -->
+    <div class="modal-overlay" id="addSourceModal" role="dialog" aria-modal="true" aria-hidden="true">
+        <div class="modal-card">
+            <div class="modal-icon" style="background: var(--color-success-bg);">
+                <i data-lucide="user-plus" style="color: var(--color-success);"></i>
+            </div>
+            <h3 class="modal-title">Tambah Akun Pantauan</h3>
+            <p class="modal-desc">Paste link profil Instagram yang ingin dipantau.</p>
+            <div class="modal-form">
+                <label class="form-label" for="inputProfileUrl">Link Profil Instagram</label>
+                <input type="text" id="inputProfileUrl" class="form-input" placeholder="https://www.instagram.com/username/" autocomplete="off">
+                <label class="form-label" for="inputPriority" style="margin-top: 12px;">Kategori Akun</label>
+                <select id="inputPriority" class="form-input">
+                    <option value="1">⭐ Resmi Pemkot — Akun Resmi Pemerintah Kota</option>
+                    <option value="2" selected>📋 Dinas/Pejabat — Akun Dinas atau Pejabat</option>
+                    <option value="3">👥 Komunitas — Akun Komunitas / Media Lokal</option>
+                </select>
+            </div>
+            <div class="modal-actions">
+                <button class="btn btn-outline" onclick="closeAddSourceModal()">Batal</button>
+                <button class="btn btn-green" id="btnSaveSource" onclick="doAddSource()">Simpan</button>
             </div>
         </div>
     </div>
@@ -49,12 +75,12 @@
                 </div>
                 <div>
                     <h1 class="navbar-title">SurabayaSambat <span class="badge-v2">v2</span></h1>
-                    <p class="navbar-sub">Sistem Monitoring Komentar Instagram — Panel Penelitian</p>
+                    <p class="navbar-sub">Monitoring Keluhan Masyarakat Surabaya — Komentar Instagram</p>
                 </div>
             </div>
             <div class="mode-badge-wrap">
                 <span class="mode-pulse-dot" id="modePulseDot"></span>
-                <span class="mode-badge" id="modeBadge">Idle</span>
+                <span class="mode-badge" id="modeBadge">Nonaktif</span>
             </div>
         </div>
     </nav>
@@ -62,42 +88,87 @@
     <!-- MAIN BODY CONTAINER -->
     <main class="container">
 
-        <!-- METRICS METRICS METRICS -->
-        <div class="metrics-grid">
-            <div class="metric-card" tabindex="0">
-                <div class="metric-icon metric-icon-red">
-                    <i data-lucide="database"></i>
-                </div>
-                <div class="metric-info">
-                    <strong class="metric-val" id="statBaseline">0</strong>
-                    <span class="metric-label">Total Terkumpul</span>
+
+        <!-- ═══ PANEL 1: KONTROL SISTEM (ON/OFF + Scrape Sekarang) ═══ -->
+        <section class="panel-glass control-panel" id="controlPanel">
+            <div class="panel-header">
+                <div class="panel-title-group">
+                    <i data-lucide="power" class="panel-icon"></i>
+                    <div>
+                        <h2>Kontrol Sistem</h2>
+                        <span class="panel-subtitle">Kelola jadwal dan pengambilan data komentar dari Instagram</span>
+                    </div>
                 </div>
             </div>
+            <div class="panel-body">
+                <div class="control-grid">
+                    <!-- Toggle ON/OFF -->
+                    <div class="control-item">
+                        <div class="toggle-group">
+                            <label class="toggle-switch" for="toggleSystem">
+                                <input type="checkbox" id="toggleSystem" onchange="doToggleSystem()">
+                                <span class="toggle-slider"></span>
+                            </label>
+                            <div class="toggle-info">
+                                <span class="toggle-label" id="toggleLabel">Sistem Nonaktif</span>
+                                <span class="toggle-desc" id="toggleDesc">Aktifkan untuk scraping otomatis mingguan</span>
+                                <span class="toggle-countdown" id="toggleCountdown" style="display:none; color: var(--color-warning); font-size: 0.72rem; font-weight: 600; margin-top: 4px;">⏳ Menghitung waktu...</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Scrape Sekarang -->
+                    <div class="control-item">
+                        <button class="btn btn-red btn-icon-gap btn-lg" id="btnScrape" onclick="doScrapeNow()">
+                            <i data-lucide="download-cloud"></i>
+                            <span>Ambil Data Sekarang</span>
+                        </button>
+                        <button class="btn btn-outline btn-icon-gap btn-stop btn-lg" id="btnStopScrape" onclick="doStopScrape()" style="display:none;">
+                            <span class="btn-spinner"></span>
+                            <i data-lucide="square"></i>
+                            <span>Menghentikan...</span>
+                        </button>
+                    </div>
+
+                    <!-- Download only -->
+                    <div class="control-item control-actions">
+                        <button class="btn btn-outline btn-icon-gap btn-download" id="btnDownload" onclick="doDownload()">
+                            <i data-lucide="download"></i>
+                            <span>Unduh Dataset (CSV)</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Status / Rate limit info -->
+                <div class="status-msg-wrapper" id="statusMsgWrap">
+                    <div class="status-msg-icon">
+                        <i data-lucide="info" id="statusIcon"></i>
+                    </div>
+                    <div class="status-msg" id="statusMsg" role="status">
+                        Klik "Ambil Data Sekarang" untuk mengambil komentar dari postingan terbaru.
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ═══ PANEL 2: RINGKASAN & BIAYA API ═══ -->
+        <div class="metrics-grid">
             <div class="metric-card" tabindex="0">
                 <div class="metric-icon metric-icon-green">
                     <i data-lucide="message-square"></i>
                 </div>
                 <div class="metric-info">
-                    <strong class="metric-val" id="statNew">0</strong>
-                    <span class="metric-label">Komentar Baru</span>
+                    <strong class="metric-val" id="statComments">0</strong>
+                    <span class="metric-label">Total Komentar</span>
                 </div>
             </div>
             <div class="metric-card" tabindex="0">
                 <div class="metric-icon metric-icon-blue">
-                    <i data-lucide="shield-check"></i>
+                    <i data-lucide="image"></i>
                 </div>
                 <div class="metric-info">
-                    <strong class="metric-val" id="statDup">0</strong>
-                    <span class="metric-label">Duplikat Dicegah</span>
-                </div>
-            </div>
-            <div class="metric-card" tabindex="0">
-                <div class="metric-icon metric-icon-orange">
-                    <i data-lucide="refresh-cw"></i>
-                </div>
-                <div class="metric-info">
-                    <strong class="metric-val" id="statCycle">0</strong>
-                    <span class="metric-label">Total Siklus</span>
+                    <strong class="metric-val" id="statPosts">0</strong>
+                    <span class="metric-label">Postingan Terpantau</span>
                 </div>
             </div>
             <div class="metric-card" tabindex="0">
@@ -105,87 +176,136 @@
                     <i data-lucide="activity"></i>
                 </div>
                 <div class="metric-info">
-                    <strong class="metric-val" id="statApi">0</strong>
+                    <strong class="metric-val" id="statApiCalls">0</strong>
                     <span class="metric-label">Panggilan API</span>
+                </div>
+            </div>
+            <div class="metric-card" tabindex="0">
+                <div class="metric-icon metric-icon-orange">
+                    <i data-lucide="dollar-sign"></i>
+                </div>
+                <div class="metric-info">
+                    <strong class="metric-val" id="statCost">$0.00</strong>
+                    <span class="metric-label">Biaya Minggu Ini</span>
+                </div>
+            </div>
+            <div class="metric-card" tabindex="0">
+                <div class="metric-icon metric-icon-red">
+                    <i data-lucide="gauge"></i>
+                </div>
+                <div class="metric-info">
+                    <strong class="metric-val" id="statScrapeCount">0/4</strong>
+                    <span class="metric-label">Scraping Minggu Ini</span>
                 </div>
             </div>
         </div>
 
-        <!-- CONTROL PANEL & STEP GUIDE -->
-        <section class="step-guide panel-glass">
-            <div class="step-guide-header">
+        <!-- ═══ PANEL 3: API USAGE & BIAYA (with scrape history) ═══ -->
+        <section class="panel-glass" id="usagePanel">
+            <div class="panel-header">
                 <div class="panel-title-group">
-                    <i data-lucide="sliders" class="panel-icon"></i>
-                    <h2>Kontrol Monitoring Keluhan</h2>
-                </div>
-            </div>
-                
-            <!-- Modern Connected Stepper Timeline (Centered) -->
-            <div class="stepper-timeline-wrap">
-                <div class="stepper-timeline" id="stepIndicators" role="progressbar" aria-label="Alur pemantauan data">
-                    <div class="step-item active" id="step1">
-                        <span class="step-circle">1</span>
-                        <span class="step-text">Kumpulkan Data</span>
-                    </div>
-                    <div class="step-divider"></div>
-                    <div class="step-item" id="step2">
-                        <span class="step-circle">2</span>
-                        <span class="step-text">Live Monitor</span>
+                    <i data-lucide="bar-chart-3" class="panel-icon"></i>
+                    <div>
+                        <h2>Pemakaian API & Biaya</h2>
+                        <span class="panel-subtitle">Rincian biaya penggunaan layanan pengambilan data</span>
                     </div>
                 </div>
+                <button class="btn btn-sm btn-outline" onclick="fetchUsage()">
+                    <i data-lucide="refresh-cw" style="width:12px;height:12px;"></i> Perbarui
+                </button>
             </div>
-            
-            <div class="step-guide-body">
-                <!-- Step flow buttons (Equal Size modern grid layout) -->
-                <div class="step-buttons-grid">
-                    <button class="btn btn-red btn-icon-gap btn-step-action" id="btnCollect" onclick="doCollect()">
-                        <i data-lucide="database"></i>
-                        <span>1. Kumpulkan Data Awal</span>
-                    </button>
-                    <button class="btn btn-green btn-icon-gap btn-step-action" id="btnStart" onclick="doStartMonitoring()" disabled>
-                        <i data-lucide="radio"></i>
-                        <span>2. Mulai Monitoring</span>
-                    </button>
+            <div class="panel-body">
+                <!-- Weekly quota progress bar -->
+                <div class="quota-progress-section" id="quotaProgressSection">
+                    <div class="quota-progress-header">
+                        <span class="quota-progress-label">Kuota Scraping Minggu Ini</span>
+                        <span class="quota-progress-value" id="quotaProgressValue">0 dari 4</span>
+                    </div>
+                    <div class="quota-progress-bar">
+                        <div class="quota-progress-fill" id="quotaProgressFill" style="width: 0%;"></div>
+                    </div>
+                    <span class="quota-progress-hint" id="quotaProgressHint">Sisa kuota: 4 scraping</span>
                 </div>
 
-                <!-- Status message block with styled info icon -->
-                <div class="status-msg-wrapper">
-                    <div class="status-msg-icon">
-                        <i data-lucide="info" id="statusIcon"></i>
+                <div class="usage-grid" id="usageGrid">
+                    <div class="usage-item">
+                        <span class="usage-label">Panggilan API hari ini</span>
+                        <span class="usage-value" id="usageTodayCalls">0</span>
                     </div>
-                    <div class="status-msg" id="statusMsg" role="status">
-                        Klik "Kumpulkan Data Awal" untuk mengambil semua komentar yang ada di postingan.
+                    <div class="usage-item">
+                        <span class="usage-label">Biaya hari ini</span>
+                        <span class="usage-value" id="usageTodayCost">$0.00</span>
+                    </div>
+                    <div class="usage-item">
+                        <span class="usage-label">Panggilan API minggu ini</span>
+                        <span class="usage-value" id="usageWeekCalls">0</span>
+                    </div>
+                    <div class="usage-item">
+                        <span class="usage-label">Biaya minggu ini</span>
+                        <span class="usage-value" id="usageWeekCost">$0.00</span>
+                    </div>
+                    <div class="usage-item">
+                        <span class="usage-label">Total semua</span>
+                        <span class="usage-value" id="usageTotalCalls">0</span>
+                    </div>
+                    <div class="usage-item">
+                        <span class="usage-label">Total biaya</span>
+                        <span class="usage-value" id="usageTotalCost">$0.00</span>
                     </div>
                 </div>
 
-                <!-- Main aligned actions row: Run / Stop / Download / Reset -->
-                <div class="action-bar">
-                    <div class="action-left-group">
-                        <button class="btn btn-red btn-icon-gap" id="btnRun" onclick="doRunOnce()" disabled>
-                            <i data-lucide="zap"></i>
-                            <span>Jalankan Sekarang</span>
-                        </button>
-                        <button class="btn btn-outline btn-icon-gap btn-stop" id="btnStop" onclick="doStop()" disabled>
-                            <i data-lucide="square"></i>
-                            <span>Hentikan</span>
-                        </button>
-                        <button class="btn btn-outline btn-icon-gap btn-download" id="btnDownload" onclick="doDownload()" disabled>
-                            <i data-lucide="download"></i>
-                            <span>Unduh Dataset (CSV)</span>
-                        </button>
+                <!-- Token status -->
+                <div class="token-status" id="tokenStatusContainer">
+                    <span class="token-status-title">Status Token API:</span>
+                    <div class="token-badges" id="tokenBadges"></div>
+                </div>
+
+                <!-- Scrape history table (Q1: transparansi biaya per sesi) -->
+                <div class="scrape-history-section" id="scrapeHistorySection" style="margin-top: var(--space-lg);">
+                    <h3 class="scrape-history-title">
+                        <i data-lucide="history" style="width:14px;height:14px;"></i>
+                        Riwayat Scraping
+                    </h3>
+                    <div class="data-table-wrap" style="max-height: 250px;">
+                        <table class="data-table" id="scrapeHistoryTable">
+                            <thead>
+                                <tr>
+                                    <th scope="col">Waktu</th>
+                                    <th scope="col">Jenis</th>
+                                    <th scope="col" style="text-align:center;">Postingan</th>
+                                    <th scope="col" style="text-align:center;">Komentar</th>
+                                    <th scope="col" style="text-align:center;">API Call</th>
+                                    <th scope="col" style="text-align:right;">Biaya Sesi</th>
+                                </tr>
+                            </thead>
+                            <tbody id="scrapeHistoryBody">
+                                <tr><td colspan="6" class="table-empty"><p>Belum ada riwayat scraping.</p></td></tr>
+                            </tbody>
+                        </table>
                     </div>
-                    
-                    <div class="action-right-group">
-                        <div class="countdown-inline" id="countdownWrap" style="display:none;">
-                            <i data-lucide="clock" class="countdown-clock-icon"></i>
-                            <span class="countdown-label">Siklus Berikutnya</span>
-                            <span class="timer" id="countdownTimer">00:00</span>
-                        </div>
-                        <button class="btn btn-outline btn-icon-gap btn-reset" id="btnReset" onclick="doReset()">
-                            <i data-lucide="rotate-ccw"></i>
-                            <span>Reset</span>
-                        </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- ═══ PANEL 4: AKUN YANG DIPANTAU ═══ -->
+        <section class="panel-glass" id="sourcesPanel">
+            <div class="panel-header table-header-flex">
+                <div class="panel-title-group">
+                    <i data-lucide="users" class="panel-icon"></i>
+                    <div>
+                        <h2>Akun yang Dipantau</h2>
+                        <span class="panel-subtitle">Daftar akun Instagram yang sedang dipantau oleh sistem</span>
                     </div>
+                    <span class="count-badge" id="sourcesBadge">0</span>
+                </div>
+                <button class="btn btn-green btn-sm btn-icon-gap" onclick="openAddSourceModal()">
+                    <i data-lucide="plus" style="width:14px;height:14px;"></i>
+                    <span>Tambah Akun</span>
+                </button>
+            </div>
+            <div class="panel-body">
+                <div class="source-cards" id="sourceCards">
+                    <p class="empty-text">Memuat daftar akun...</p>
                 </div>
             </div>
         </section>
@@ -201,10 +321,10 @@
                             <span class="dot yellow"></span>
                             <span class="dot green"></span>
                         </div>
-                        <span>Console Log Aktivitas</span>
+                        <span>Log Aktivitas</span>
                     </div>
                     <div class="terminal-actions">
-                        <button class="terminal-btn-icon" onclick="clearLocalLogs()" title="Bersihkan log di layar" aria-label="Bersihkan log di layar">
+                        <button class="terminal-btn-icon" onclick="clearLocalLogs()" title="Bersihkan log" aria-label="Bersihkan log">
                             <i data-lucide="trash-2"></i>
                         </button>
                     </div>
@@ -213,7 +333,7 @@
                     <div class="log-container" id="logContainer">
                         <div class="log-empty">
                             <i data-lucide="terminal" class="empty-icon"></i>
-                            <p>Belum ada aktivitas monitoring tercatat.</p>
+                            <p>Belum ada aktivitas tercatat.</p>
                         </div>
                     </div>
                 </div>
@@ -224,7 +344,7 @@
                 <div class="panel-header">
                     <div class="panel-title-group">
                         <i data-lucide="bar-chart-3" class="panel-icon"></i>
-                        <span>Statistik Temuan per Siklus</span>
+                        <span>Komentar per Sesi Scraping</span>
                     </div>
                 </div>
                 <div class="panel-body chart-body">
@@ -235,38 +355,80 @@
             </section>
         </div>
 
-        <!-- DATA TABLE: Komentar Baru -->
+        <!-- ═══ PANEL 5: KOMENTAR TERBARU ═══ -->
         <section class="panel-glass table-panel">
             <div class="panel-header table-header-flex">
                 <div class="panel-title-group">
-                    <i data-lucide="table" class="panel-icon"></i>
-                    <h2>Dataset Komentar Terdeteksi</h2>
-                    <span class="count-badge" id="tableBadge">0</span>
+                    <i data-lucide="message-circle" class="panel-icon"></i>
+                    <div>
+                        <h2>Komentar Terbaru</h2>
+                        <span class="panel-subtitle">Daftar komentar warga yang telah dikumpulkan dari Instagram</span>
+                    </div>
+                    <span class="count-badge" id="commentsBadge">0</span>
                 </div>
             </div>
             <div class="panel-body">
                 <div class="data-table-wrap">
-                    <table class="data-table" id="dataTable">
+                    <table class="data-table" id="commentsTable">
                         <thead>
                             <tr>
                                 <th scope="col" style="width: 60px;">No</th>
-                                <th scope="col" style="width: 180px;">Username</th>
+                                <th scope="col" style="width: 150px;">Akun Sumber</th>
                                 <th scope="col">Komentar</th>
-                                <th scope="col" style="width: 180px;">Waktu Kirim</th>
-                                <th scope="col" style="width: 180px;">Waktu Terdeteksi</th>
-                                <th scope="col" style="width: 100px; text-align: center;">Siklus</th>
+                                <th scope="col" style="width: 160px;">Waktu</th>
+                                <th scope="col" style="width: 140px;">Postingan</th>
                             </tr>
                         </thead>
-                        <tbody id="dataBody">
+                        <tbody id="commentsBody">
                             <tr>
-                                <td colspan="6" class="table-empty">
+                                <td colspan="5" class="table-empty">
                                     <div class="table-empty-graphic">
                                         <i data-lucide="inbox" class="empty-icon"></i>
-                                        <p class="empty-title">Belum Ada Komentar Baru</p>
-                                        <p class="empty-subtitle">Data komentar keluhan warga baru akan tercantum di sini setelah sistem monitoring aktif dan mendeteksi komentar baru secara real-time.</p>
+                                        <p class="empty-title">Belum Ada Komentar</p>
+                                        <p class="empty-subtitle">Komentar akan muncul di sini setelah proses scraping berjalan.</p>
                                     </div>
                                 </td>
                             </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <!-- Load More button for pagination -->
+                <div class="load-more-wrap" id="loadMoreWrap" style="display:none;">
+                    <button class="btn btn-outline btn-sm" id="btnLoadMore" onclick="loadMoreComments()">
+                        Muat Lebih Banyak
+                    </button>
+                    <span class="load-more-info" id="loadMoreInfo"></span>
+                </div>
+            </div>
+        </section>
+
+        <!-- ═══ PANEL 6: POSTINGAN TERDETEKSI (Collapsible detail) ═══ -->
+        <section class="panel-glass" id="postsPanel">
+            <div class="panel-header table-header-flex clickable-header" onclick="togglePanel('postsContent')">
+                <div class="panel-title-group">
+                    <i data-lucide="image" class="panel-icon"></i>
+                    <div>
+                        <h2>Postingan Terdeteksi</h2>
+                        <span class="panel-subtitle">Daftar postingan Instagram yang ditemukan oleh sistem</span>
+                    </div>
+                    <span class="count-badge" id="postsBadge">0</span>
+                </div>
+                <i data-lucide="chevron-down" class="toggle-chevron" id="postsChevron"></i>
+            </div>
+            <div class="panel-body collapsible" id="postsContent" style="display:none;">
+                <div class="data-table-wrap">
+                    <table class="data-table" id="postsTable">
+                        <thead>
+                            <tr>
+                                <th scope="col">Akun</th>
+                                <th scope="col">Caption</th>
+                                <th scope="col" style="text-align:center;">Relevansi</th>
+                                <th scope="col" style="text-align:center;">Komentar</th>
+                                <th scope="col">URL</th>
+                            </tr>
+                        </thead>
+                        <tbody id="postsBody">
+                            <tr><td colspan="5" class="table-empty"><p>Belum ada postingan. Klik "Ambil Data Sekarang".</p></td></tr>
                         </tbody>
                     </table>
                 </div>
@@ -275,16 +437,19 @@
 
     </main>
 
-    <!-- FOOTER SECTION -->
+    <!-- FOOTER SECTION (Q7: Reset moved here, less prominent) -->
     <footer class="footer">
         <div class="footer-left">
             <span class="footer-title">SurabayaSambat v2</span>
-            <span class="footer-desc">Proyek Penelitian Deteksi &amp; Visualisasi Real-Time Keluhan Warga Surabaya</span>
+            <span class="footer-desc">Monitoring & Analisis Keluhan Masyarakat Surabaya Berbasis Lokasi dan Prioritas</span>
         </div>
         <div class="footer-right">
-            <span class="footer-tag">Demo Mode</span>
-            <span class="footer-divider">&middot;</span>
-            <span class="footer-interval-wrap">Interval Pemeriksaan: <strong id="footerInterval">40</strong> detik</span>
+            <span class="footer-tag" id="footerSystemTag">Nonaktif</span>
+            <span class="footer-divider">|</span>
+            <button class="btn-footer-reset" id="btnReset" onclick="doReset()" title="Reset semua data yang sudah dikumpulkan">
+                <i data-lucide="rotate-ccw" style="width:12px;height:12px;"></i>
+                <span>Reset Data</span>
+            </button>
         </div>
     </footer>
 
@@ -302,14 +467,28 @@
             container.innerHTML = `
                 <div class="log-empty">
                     <i data-lucide="terminal" class="empty-icon"></i>
-                    <p>Belum ada aktivitas monitoring tercatat.</p>
+                    <p>Belum ada aktivitas tercatat.</p>
                 </div>
             `;
             lucide.createIcons();
             if (typeof showToast === 'function') {
-                showToast("Console log pada browser dibersihkan.", "info");
+                showToast("Log dibersihkan.", "info");
+            }
+        }
+
+        // Toggle collapsible panels
+        function togglePanel(contentId) {
+            const el = document.getElementById(contentId);
+            const chevron = document.getElementById(contentId.replace('Content', 'Chevron'));
+            if (el.style.display === 'none') {
+                el.style.display = 'block';
+                if (chevron) chevron.style.transform = 'rotate(180deg)';
+            } else {
+                el.style.display = 'none';
+                if (chevron) chevron.style.transform = 'rotate(0deg)';
             }
         }
     </script>
+
 </body>
 </html>
