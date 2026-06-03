@@ -1,0 +1,303 @@
+/* ── Button Loading Overrides ────────────────────────────── */
+.btn.loading {
+    position: relative;
+    color: transparent !important;
+    pointer-events: none;
+}
+
+.btn.loading::after {
+    content: '';
+    position: absolute;
+    width: 16px;
+    height: 16px;
+    top: 50%;
+    left: 50%;
+    margin-top: -8px;
+    margin-left: -8px;
+    border: 2px solid rgba(0, 0, 0, 0.1);
+    border-top-color: var(--primary);
+    border-radius: 50%;
+    animation: spin 0.6s linear infinite;
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+
+/* Shimmer Loading Skeleton Effect */
+.shimmer {
+    background: linear-gradient(90deg, #f1f5f9 25%, #e2e8f0 50%, #f1f5f9 75%);
+    background-size: 200% 100%;
+    animation: loadingShimmer 1.5s infinite linear;
+}
+
+@keyframes loadingShimmer {
+    to { background-position: -200% 0; }
+}
+
+/* Keyframes Animations */
+@keyframes dotPulse {
+    0% { transform: scale(1); opacity: 1; }
+    50% { transform: scale(1.3); opacity: 0.65; }
+    100% { transform: scale(1); opacity: 1; }
+}
+
+@keyframes pulse-ring {
+    0% { transform: scale(0.97); }
+    50% { transform: scale(1.03); opacity: 0.9; }
+    100% { transform: scale(0.97); }
+}
+
+/* ── Stage 4: Discovery + Queue ──────────────────────────────── */
+.stage4-panel { margin-top: var(--space-lg); }
+
+.stage4-actions {
+    display: flex;
+    gap: var(--space-sm);
+    flex-wrap: wrap;
+}
+
+.stage4-subtitle {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.95rem;
+    font-weight: 700;
+    margin: var(--space-lg) 0 var(--space-sm);
+    color: var(--text-strong, #0f172a);
+}
+.stage4-subtitle:first-child { margin-top: 0; }
+.stage4-subtitle i { width: 18px; height: 18px; }
+
+/* Relevance badges */
+.rel-badge {
+    display: inline-block;
+    font-size: 0.6rem;
+    padding: 2px 7px;
+    border-radius: 4px;
+    font-weight: 800;
+    letter-spacing: 0.3px;
+    cursor: help;
+}
+.rel-high { background: #be123c; color: #fff; }
+.rel-medium { background: #f59e0b; color: #fff; }
+.rel-low { background: #64748b; color: #fff; }
+.rel-unknown { background: #e2e8f0; color: #475569; }
+
+.rel-score {
+    color: var(--text-muted);
+    font-size: 0.62rem;
+    font-weight: 600;
+}
+
+/* Queue status badges */
+.qstatus-pending, .qstatus-running, .qstatus-completed,
+.qstatus-failed, .qstatus-skipped {
+    display: inline-block;
+    font-size: 0.6rem;
+    padding: 2px 7px;
+    border-radius: 4px;
+    font-weight: 800;
+    text-transform: uppercase;
+}
+.qstatus-pending { background: #e2e8f0; color: #475569; }
+.qstatus-running { background: #3b82f6; color: #fff; }
+.qstatus-completed { background: #16a34a; color: #fff; }
+.qstatus-failed { background: #be123c; color: #fff; }
+.qstatus-skipped { background: #94a3b8; color: #fff; }
+
+/* ── Control Panel Layout ─────────────────────────────────── */
+.control-grid {
+    display: flex;
+    align-items: center;
+    gap: var(--space-xl);
+    flex-wrap: wrap;
+}
+
+.control-item {
+    display: flex;
+    align-items: center;
+    gap: var(--space-md);
+}
+
+.control-actions {
+    margin-left: auto;
+    gap: var(--space-sm);
+}
+
+@media (max-width: 768px) {
+    .control-grid {
+        flex-direction: column;
+        align-items: stretch;
+    }
+    .control-actions { margin-left: 0; }
+}
+
+/* ── Toggle Switch ────────────────────────────────────────── */
+.toggle-group {
+    display: flex;
+    align-items: center;
+    gap: var(--space-md);
+}
+
+.toggle-switch {
+    position: relative;
+    display: inline-block;
+    width: 52px;
+    height: 28px;
+    flex-shrink: 0;
+}
+
+.toggle-switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.toggle-slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background-color: #cbd5e1;
+    border-radius: 28px;
+    transition: background var(--transition-normal);
+}
+
+.toggle-slider::before {
+    content: "";
+    position: absolute;
+    height: 22px;
+    width: 22px;
+    left: 3px;
+    bottom: 3px;
+    background-color: white;
+    border-radius: 50%;
+    transition: transform var(--transition-normal);
+    box-shadow: 0 1px 3px rgba(0,0,0,0.15);
+}
+
+.toggle-switch input:checked + .toggle-slider {
+    background-color: #16a34a;
+}
+
+.toggle-switch input:checked + .toggle-slider::before {
+    transform: translateX(24px);
+}
+
+.toggle-info {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.toggle-label {
+    font-weight: 700;
+    font-size: 0.88rem;
+    color: var(--text-primary);
+}
+
+.toggle-desc {
+    font-size: 0.72rem;
+    color: var(--text-muted);
+}
+
+/* ── Collapsible Panel ────────────────────────────────────── */
+.clickable-header {
+    cursor: pointer;
+    user-select: none;
+}
+
+.clickable-header:hover {
+    background: rgba(0,0,0,0.01);
+}
+
+.toggle-chevron {
+    width: 18px;
+    height: 18px;
+    color: var(--text-muted);
+    transition: transform var(--transition-normal);
+}
+
+/* ── Empty text ───────────────────────────────────────────── */
+.empty-text {
+    text-align: center;
+    padding: var(--space-xl);
+    color: var(--text-muted);
+    font-size: 0.78rem;
+    font-style: italic;
+}
+
+/* ── Link external ────────────────────────────────────────── */
+.link-external {
+    color: var(--primary);
+    text-decoration: none;
+    font-size: 0.72rem;
+    font-weight: 600;
+}
+.link-external:hover {
+    text-decoration: underline;
+}
+
+/* ── Panel Subtitle (Q10) ────────────────────────────────── */
+.panel-subtitle {
+    display: block;
+    font-size: 0.68rem;
+    font-weight: 500;
+    color: var(--text-muted);
+    margin-top: 2px;
+    line-height: 1.3;
+}
+
+/* ── Footer Reset Button (Q7) ────────────────────────────── */
+.btn-footer-reset {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 0.62rem;
+    font-weight: 600;
+    color: var(--text-muted);
+    background: none;
+    border: 1px solid var(--border-light);
+    border-radius: 4px;
+    padding: 3px 8px;
+    cursor: pointer;
+    transition: all var(--transition-fast);
+    font-family: 'Plus Jakarta Sans', sans-serif;
+}
+
+.btn-footer-reset:hover {
+    color: var(--color-error);
+    border-color: var(--color-error);
+    background: var(--color-error-bg);
+}
+
+/* ── Button Spinner (Q6) ─────────────────────────────────── */
+.btn-spinner {
+    display: inline-block;
+    width: 14px;
+    height: 14px;
+    border: 2px solid rgba(0,0,0,0.15);
+    border-top-color: var(--color-error);
+    border-radius: 50%;
+    animation: spin 0.7s linear infinite;
+    flex-shrink: 0;
+}
+
+/* ── Additional Responsive (Q12) ─────────────────────────── */
+@media (max-width: 480px) {
+    .metrics-grid { grid-template-columns: 1fr; }
+    .navbar-sub { display: none; }
+    .navbar-title { font-size: 1.1rem; }
+    .container { padding: 12px var(--space-md) var(--space-xl); }
+    .panel-body { padding: var(--space-md); }
+    .usage-grid { grid-template-columns: 1fr; }
+    .quota-progress-section { padding: var(--space-sm) var(--space-md); }
+    .source-card-main { flex-direction: column; align-items: flex-start; gap: 4px; }
+}
+
+@media (max-width: 768px) {
+    .panel-title-group { flex-wrap: wrap; }
+    .panel-header { flex-wrap: wrap; gap: 8px; }
+    .source-card { flex-direction: column; align-items: flex-start; gap: 8px; }
+    .source-card .btn-icon-delete { align-self: flex-end; }
+}

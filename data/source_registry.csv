@@ -1,2 +1,3 @@
 ﻿source_id,source_account,platform,priority_level,monitoring_window_days,status,notes
 SRC001,@lsambat__,instagram,1,30,active,akun lab internal
+SRC002,e100ss,facebook,2,30,active,Ditambahkan via dashboard (facebook)

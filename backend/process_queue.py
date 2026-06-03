@@ -62,12 +62,13 @@ def _normalize_comment(item: dict, post_row: dict, queue_id: str) -> dict:
     created_at = str(created_at) if created_at is not None else ""
 
     post_url = post_row.get("post_url", "")
+    platform = post_row.get("platform", "instagram")
 
     if comment_id:
-        comment_id_hash = make_sha256(f"instagram|{comment_id}")
+        comment_id_hash = make_sha256(f"{platform}|{comment_id}")
     else:
         comment_id_hash = make_sha256(
-            f"instagram|{post_url}|{text}|{created_at}"
+            f"{platform}|{post_url}|{text}|{created_at}"
         )
 
     return {
@@ -133,7 +134,9 @@ def process_one_queue_item(
         logger.warning(f"[{queue_id}] invalid: post_url kosong")
         return out
 
-    result = scraper.scrape_comments(post_url, limit=comments_limit)
+    # Detect platform dari URL postingan
+    platform = "facebook" if "facebook.com" in post_url else "instagram"
+    result = scraper.scrape_comments(post_url, limit=comments_limit, platform=platform)
 
     if result["api_status"] != "success":
         out["error_message"] = result.get("error_message", "api error")
@@ -149,6 +152,7 @@ def process_one_queue_item(
         "post_url": post_url,
         "post_shortcode": target_sc,
         "source_account": source_account,
+        "platform": platform,
     }
 
     new_rows = []

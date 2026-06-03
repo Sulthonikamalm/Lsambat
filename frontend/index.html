@@ -48,10 +48,11 @@
                 <i data-lucide="user-plus" style="color: var(--color-success);"></i>
             </div>
             <h3 class="modal-title">Tambah Akun Pantauan</h3>
-            <p class="modal-desc">Paste link profil Instagram yang ingin dipantau.</p>
+            <p class="modal-desc">Paste link profil Instagram atau halaman Facebook yang ingin dipantau.</p>
             <div class="modal-form">
-                <label class="form-label" for="inputProfileUrl">Link Profil Instagram</label>
-                <input type="text" id="inputProfileUrl" class="form-input" placeholder="https://www.instagram.com/username/" autocomplete="off">
+                <label class="form-label" for="inputProfileUrl">Link Profil Instagram / Halaman Facebook</label>
+                <input type="text" id="inputProfileUrl" class="form-input" placeholder="https://www.instagram.com/username/ atau https://facebook.com/pagename" autocomplete="off">
+                <div id="platformHint" style="font-size: 0.75rem; margin-top: 4px; font-weight: 600; min-height: 18px; color: var(--text-muted);"></div>
                 <label class="form-label" for="inputPriority" style="margin-top: 12px;">Kategori Akun</label>
                 <select id="inputPriority" class="form-input">
                     <option value="1">⭐ Resmi Pemkot — Akun Resmi Pemerintah Kota</option>
@@ -75,7 +76,7 @@
                 </div>
                 <div>
                     <h1 class="navbar-title">SurabayaSambat <span class="badge-v2">v2</span></h1>
-                    <p class="navbar-sub">Monitoring Keluhan Masyarakat Surabaya — Komentar Instagram</p>
+                    <p class="navbar-sub">Monitoring Keluhan Masyarakat Surabaya — Instagram & Facebook</p>
                 </div>
             </div>
             <div class="mode-badge-wrap">
@@ -177,7 +178,7 @@
                 </div>
                 <div class="metric-info">
                     <strong class="metric-val" id="statApiCalls">0</strong>
-                    <span class="metric-label">Panggilan API</span>
+                    <span class="metric-label">Jumlah Akses Data</span>
                 </div>
             </div>
             <div class="metric-card" tabindex="0">
@@ -185,8 +186,8 @@
                     <i data-lucide="dollar-sign"></i>
                 </div>
                 <div class="metric-info">
-                    <strong class="metric-val" id="statCost">$0.00</strong>
-                    <span class="metric-label">Biaya Minggu Ini</span>
+                    <strong class="metric-val" id="statCost">Rp 0</strong>
+                    <span class="metric-label">Estimasi Biaya Minggu Ini</span>
                 </div>
             </div>
             <div class="metric-card" tabindex="0">
@@ -195,7 +196,7 @@
                 </div>
                 <div class="metric-info">
                     <strong class="metric-val" id="statScrapeCount">0/4</strong>
-                    <span class="metric-label">Scraping Minggu Ini</span>
+                    <span class="metric-label">Batas Penggunaan Mingguan</span>
                 </div>
             </div>
         </div>
@@ -206,7 +207,7 @@
                 <div class="panel-title-group">
                     <i data-lucide="bar-chart-3" class="panel-icon"></i>
                     <div>
-                        <h2>Pemakaian API & Biaya</h2>
+                        <h2>Penggunaan & Estimasi Biaya</h2>
                         <span class="panel-subtitle">Rincian biaya penggunaan layanan pengambilan data</span>
                     </div>
                 </div>
@@ -218,7 +219,7 @@
                 <!-- Weekly quota progress bar -->
                 <div class="quota-progress-section" id="quotaProgressSection">
                     <div class="quota-progress-header">
-                        <span class="quota-progress-label">Kuota Scraping Minggu Ini</span>
+                        <span class="quota-progress-label">Kuota Pengambilan Data Minggu Ini</span>
                         <span class="quota-progress-value" id="quotaProgressValue">0 dari 4</span>
                     </div>
                     <div class="quota-progress-bar">
@@ -229,34 +230,34 @@
 
                 <div class="usage-grid" id="usageGrid">
                     <div class="usage-item">
-                        <span class="usage-label">Panggilan API hari ini</span>
+                        <span class="usage-label">Data diakses hari ini</span>
                         <span class="usage-value" id="usageTodayCalls">0</span>
                     </div>
                     <div class="usage-item">
-                        <span class="usage-label">Biaya hari ini</span>
-                        <span class="usage-value" id="usageTodayCost">$0.00</span>
+                        <span class="usage-label">Estimasi biaya hari ini</span>
+                        <span class="usage-value" id="usageTodayCost">Rp 0</span>
                     </div>
                     <div class="usage-item">
-                        <span class="usage-label">Panggilan API minggu ini</span>
+                        <span class="usage-label">Data diakses minggu ini</span>
                         <span class="usage-value" id="usageWeekCalls">0</span>
                     </div>
                     <div class="usage-item">
-                        <span class="usage-label">Biaya minggu ini</span>
-                        <span class="usage-value" id="usageWeekCost">$0.00</span>
+                        <span class="usage-label">Estimasi biaya minggu ini</span>
+                        <span class="usage-value" id="usageWeekCost">Rp 0</span>
                     </div>
                     <div class="usage-item">
                         <span class="usage-label">Total semua</span>
                         <span class="usage-value" id="usageTotalCalls">0</span>
                     </div>
                     <div class="usage-item">
-                        <span class="usage-label">Total biaya</span>
-                        <span class="usage-value" id="usageTotalCost">$0.00</span>
+                        <span class="usage-label">Total estimasi biaya</span>
+                        <span class="usage-value" id="usageTotalCost">Rp 0</span>
                     </div>
                 </div>
 
                 <!-- Token status -->
                 <div class="token-status" id="tokenStatusContainer">
-                    <span class="token-status-title">Status Token API:</span>
+                    <span class="token-status-title">Status Koneksi:</span>
                     <div class="token-badges" id="tokenBadges"></div>
                 </div>
 
@@ -274,7 +275,7 @@
                                     <th scope="col">Jenis</th>
                                     <th scope="col" style="text-align:center;">Postingan</th>
                                     <th scope="col" style="text-align:center;">Komentar</th>
-                                    <th scope="col" style="text-align:center;">API Call</th>
+                                    <th scope="col" style="text-align:center;">Akses Data</th>
                                     <th scope="col" style="text-align:right;">Biaya Sesi</th>
                                 </tr>
                             </thead>
@@ -294,7 +295,7 @@
                     <i data-lucide="users" class="panel-icon"></i>
                     <div>
                         <h2>Akun yang Dipantau</h2>
-                        <span class="panel-subtitle">Daftar akun Instagram yang sedang dipantau oleh sistem</span>
+                        <span class="panel-subtitle">Daftar akun Instagram & Facebook yang sedang dipantau oleh sistem</span>
                     </div>
                     <span class="count-badge" id="sourcesBadge">0</span>
                 </div>
@@ -304,8 +305,29 @@
                 </button>
             </div>
             <div class="panel-body">
-                <div class="source-cards" id="sourceCards">
-                    <p class="empty-text">Memuat daftar akun...</p>
+                <div class="sources-dual-grid">
+                    <!-- Kolom Instagram -->
+                    <div class="sources-platform-col">
+                        <div class="platform-header">
+                            <span class="platform-icon platform-icon-ig">📷</span>
+                            <span class="platform-label">Instagram</span>
+                            <span class="count-badge count-badge-sm" id="igCountBadge">0</span>
+                        </div>
+                        <div class="source-cards" id="sourceCardsIG">
+                            <p class="empty-text">Memuat...</p>
+                        </div>
+                    </div>
+                    <!-- Kolom Facebook -->
+                    <div class="sources-platform-col">
+                        <div class="platform-header">
+                            <span class="platform-icon platform-icon-fb">📘</span>
+                            <span class="platform-label">Facebook</span>
+                            <span class="count-badge count-badge-sm" id="fbCountBadge">0</span>
+                        </div>
+                        <div class="source-cards" id="sourceCardsFB">
+                            <p class="empty-text">Memuat...</p>
+                        </div>
+                    </div>
                 </div>
             </div>
         </section>
@@ -453,7 +475,10 @@
         </div>
     </footer>
 
-    <!-- Core App JS script -->
+    <!-- Core App JS scripts -->
+    <script src="js/utils.js"></script>
+    <script src="js/ui.js"></script>
+    <script src="js/api.js"></script>
     <script src="js/app.js"></script>
     <script>
         // Initialize Lucide icons on page load

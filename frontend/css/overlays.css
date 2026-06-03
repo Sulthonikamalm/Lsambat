@@ -1,0 +1,230 @@
+/* ── Custom Dialog / Modal Overlay (Light Mode) ──────────── */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(15, 23, 42, 0.4);
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity var(--transition-normal);
+}
+
+.modal-overlay.active {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+/* ── Modal visible class (override .active) ───────────────── */
+.modal-overlay.visible {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+.modal-overlay.visible .modal-card {
+    transform: translateY(0);
+}
+
+.modal-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border-light);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-lg);
+    width: 90%;
+    max-width: 400px;
+    padding: var(--space-xl);
+    text-align: center;
+    transform: translateY(20px);
+    transition: transform var(--transition-normal);
+}
+
+.modal-overlay.active .modal-card {
+    transform: translateY(0);
+}
+
+.modal-icon {
+    width: 54px;
+    height: 54px;
+    background: var(--color-warning-bg);
+    color: var(--color-warning);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto var(--space-lg);
+    border: 1px solid var(--color-warning-border);
+}
+.modal-icon i {
+    width: 24px;
+    height: 24px;
+}
+
+.modal-title {
+    font-size: 1.1rem;
+    font-weight: 800;
+    color: var(--text-primary);
+    margin-bottom: var(--space-sm);
+}
+
+.modal-desc {
+    font-size: 0.8rem;
+    color: var(--text-secondary);
+    line-height: 1.5;
+    margin-bottom: var(--space-xl);
+}
+
+.modal-actions {
+    display: flex;
+    gap: var(--space-md);
+    justify-content: center;
+}
+.modal-actions button {
+    flex: 1;
+}
+
+/* ── Form Elements (Modal) ────────────────────────────────── */
+.modal-form {
+    text-align: left;
+    margin-bottom: var(--space-lg);
+}
+
+.form-label {
+    display: block;
+    font-size: 0.72rem;
+    font-weight: 700;
+    color: var(--text-secondary);
+    margin-bottom: 6px;
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+}
+
+.form-input {
+    width: 100%;
+    padding: 10px 14px;
+    font-size: 0.82rem;
+    border: 1px solid var(--border-light);
+    border-radius: var(--radius-sm);
+    background: var(--bg-base);
+    color: var(--text-primary);
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    transition: border-color var(--transition-fast);
+}
+
+.form-input:focus {
+    outline: none;
+    border-color: var(--primary);
+    box-shadow: 0 0 0 3px rgba(190, 18, 60, 0.1);
+}
+
+.form-input::placeholder {
+    color: var(--text-muted);
+}
+
+select.form-input {
+    appearance: auto;
+    cursor: pointer;
+}
+
+/* ── Toast Notifications System ──────────────────────────── */
+.toast-container {
+    position: fixed;
+    top: var(--space-xl);
+    right: var(--space-xl);
+    z-index: 1050;
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-sm);
+    width: 320px;
+    max-width: 90%;
+    pointer-events: none;
+}
+
+.toast {
+    background: var(--bg-card);
+    border: 1px solid var(--border-light);
+    border-radius: var(--radius-sm);
+    padding: var(--space-md) var(--space-lg);
+    color: var(--text-primary);
+    box-shadow: var(--shadow-lg);
+    pointer-events: auto;
+    display: flex;
+    align-items: flex-start;
+    gap: var(--space-md);
+    transform: translateX(50px);
+    opacity: 0;
+    transition: transform var(--transition-normal), opacity var(--transition-normal), margin-top var(--transition-normal);
+}
+
+.toast.show {
+    transform: translateX(0);
+    opacity: 1;
+}
+
+.toast-icon {
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 20px;
+    height: 20px;
+    margin-top: 1px;
+}
+.toast-icon i {
+    width: 16px;
+    height: 16px;
+}
+
+.toast-info {
+    flex-grow: 1;
+}
+
+.toast-message {
+    font-size: 0.78rem;
+    font-weight: 600;
+    color: var(--text-secondary);
+    line-height: 1.45;
+}
+
+/* Toast variants styling */
+.toast-success-type { border-left: 4px solid var(--color-success); }
+.toast-success-type .toast-icon { color: var(--color-success); }
+
+.toast-warning-type { border-left: 4px solid var(--color-warning); }
+.toast-warning-type .toast-icon { color: var(--color-warning); }
+
+.toast-error-type { border-left: 4px solid var(--color-error); }
+.toast-error-type .toast-icon { color: var(--color-error); }
+
+.toast-info-type { border-left: 4px solid var(--color-info); }
+.toast-info-type .toast-icon { color: var(--color-info); }
+
+/* ── Toast simple (v2 simplified) ─────────────────────────── */
+.toast {
+    animation: toastSlideIn 0.3s ease-out forwards;
+}
+
+.toast-success { border-left: 4px solid var(--color-success); }
+.toast-warning { border-left: 4px solid var(--color-warning); }
+.toast-error { border-left: 4px solid var(--color-error); }
+.toast-info { border-left: 4px solid var(--color-info, #3b82f6); }
+
+.toast-fade-out {
+    animation: toastFadeOut 0.3s ease-in forwards;
+}
+
+@keyframes toastSlideIn {
+    from { transform: translateX(50px); opacity: 0; }
+    to { transform: translateX(0); opacity: 1; }
+}
+
+@keyframes toastFadeOut {
+    from { opacity: 1; }
+    to { opacity: 0; transform: translateY(-10px); }
+}

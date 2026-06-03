@@ -2,7 +2,9 @@ project:
   name: "SurabayaSambat v2 - Monitoring Keluhan Masyarakat Surabaya"
 
 apify:
-  actor_id: "apify/instagram-scraper"
+  actor_ids:
+    instagram: "apify/instagram-scraper"
+    facebook: "apify/facebook-posts-scraper"
   token_envs:
     - "APIFY_TOKEN_1"
     - "APIFY_TOKEN_2"
