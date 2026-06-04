@@ -21,7 +21,8 @@ def load_source_registry(registry_path) -> pd.DataFrame:
         logger.error(f"Kolom wajib tidak ada di source_registry.csv: {missing}")
         return pd.DataFrame()
 
-    logger.info(f"Loaded {len(df)} akun dari source_registry.csv")
+    # debug: dipanggil tiap polling dashboard → kalau pakai info terminal banjir
+    logger.debug(f"Loaded {len(df)} akun dari source_registry.csv")
     return df
 
 
@@ -43,7 +44,7 @@ def get_active_sources(df_sources) -> pd.DataFrame:
             )
     active = active[~invalid_mask]
 
-    logger.info(f"Active sources (instagram+facebook): {len(active)}")
+    logger.debug(f"Active sources (instagram+facebook): {len(active)}")
     return active
 
 

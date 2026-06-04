@@ -24,6 +24,7 @@ import discover_posts as dp
 import process_queue as pq
 from post_queue import load_post_queue
 from stage4_utils import load_csv_if_exists
+from discovery.fetcher import normalize_post_item
 
 
 # ── Mock scraper ──────────────────────────────────────────────
@@ -35,7 +36,8 @@ class FakeScraper:
     def __init__(self):
         self.posts_by_profile = {}     # profile_url -> list of raw post items
         self.comments_by_url = {}      # post_url -> list of raw comment items
-        self.fail_comments_for = set()  # post_url yang harus gagal
+        self.fail_comments_for = set()  # post_url yang harus gagal (HTTP error)
+        self.quota_exhausted = False   # jika True: semua scrape_comments → all_tokens_exhausted
         self.profile_calls = []        # (profile_url, only_newer_than)
         self.comment_calls = []        # post_url
         self.tokens = ["FAKE"]
@@ -50,8 +52,16 @@ class FakeScraper:
             "scraped_at": "now",
         }
 
-    def scrape_comments(self, post_url, limit=50):
+    def scrape_comments(self, post_url, limit=50, platform="instagram"):
         self.comment_calls.append(post_url)
+        if self.quota_exhausted:
+            return {
+                "comments": [],
+                "token_index": 1,
+                "api_status": "all_tokens_exhausted",
+                "error_message": "Semua token API sudah mencapai batas pemakaian.",
+                "scraped_at": "now",
+            }
         if post_url in self.fail_comments_for:
             return {
                 "comments": [],
@@ -129,8 +139,8 @@ def post_item(url=None, shortcode=None, caption="", ts=None,
     return item
 
 
-def comment_item(cid, text, url=None, shortcode=None):
-    item = {"id": cid, "text": text, "timestamp": "2026-05-21T00:00:00Z"}
+def comment_item(cid, text, url=None, shortcode=None, ts="2026-05-21T00:00:00Z"):
+    item = {"id": cid, "text": text, "timestamp": ts}
     if url:
         item["postUrl"] = url
     if shortcode:
@@ -196,9 +206,13 @@ def scenario_3():
 
 def scenario_4():
     print("\n[Skenario 4] comment_count naik → queue comment_count_changed")
-    _, paths, settings = make_env([
-        ("SRC001", "@surabaya", "instagram", "1", "30", "active", "pemkot"),
-    ])
+    # Set min_comment_increase=1 agar menguji MEKANISME re-queue, bukan nilai tuning.
+    _, paths, settings = make_env(
+        [("SRC001", "@surabaya", "instagram", "1", "30", "active", "pemkot")],
+        post_discovery={"max_posts_per_source": 10, "only_active_sources": True,
+                        "use_monitoring_window": True, "comments_per_post": 100,
+                        "min_comment_increase": 1},
+    )
     scraper = FakeScraper()
     url = "https://www.instagram.com/p/AAA111/"
     scraper.posts_by_profile["https://www.instagram.com/surabaya/"] = [
@@ -206,7 +220,7 @@ def scenario_4():
     ]
     dp.run_post_discovery(scraper, settings, paths)
 
-    # comment_count naik 5 → 9
+    # comment_count naik 5 → 9 (+4, >= min_comment_increase=1)
     scraper.posts_by_profile["https://www.instagram.com/surabaya/"] = [
         post_item(url=url, caption="x", comments=9)
     ]
@@ -252,10 +266,16 @@ def scenario_5():
     df_q = load_post_queue(paths["post_queue_csv"])
 
     check("S5: raw_comments.csv terbentuk", paths["raw_comments_csv"].exists())
-    check("S5: 2 komentar masuk dataset", len(df_c) == 2, f"comments={len(df_c)}")
+    check("S5: 2 komentar masuk dataset (tersimpan, tagged)", len(df_c) == 2, f"comments={len(df_c)}")
     check("S5: status queue → completed",
           (df_q["status"] == "completed").all(), str(df_q["status"].tolist()))
-    check("S5: total_new_comments == 2", summary["total_new_comments"] == 2)
+    # Komentar bertanggal 2026-05-21 (sebelum post ditemukan 'sekarang') → baseline.
+    check("S5: komentar lama ditandai baseline (bukan keluhan baru)",
+          (df_c["is_baseline"] == "true").all(), str(df_c["is_baseline"].tolist()))
+    check("S5: total_new_comments == 0 (semua baseline)", summary["total_new_comments"] == 0,
+          f"new={summary['total_new_comments']}")
+    check("S5: total_baseline_comments == 2", summary["total_baseline_comments"] == 2,
+          f"baseline={summary['total_baseline_comments']}")
 
     # Proses lagi: tidak ada pending → tidak menambah komentar
     summary2 = pq.process_pending_queue(scraper, settings, paths)
@@ -305,8 +325,8 @@ def scenario_7():
           failed_row["error_message"].iloc[0] if len(failed_row) else "")
 
     # Post tanpa URL & shortcode → normalize_post_item return {} (di-skip, tidak crash)
-    empty = dp.normalize_post_item({"caption": "no url"},
-                                   {"source_id": "X", "source_account": "@a", "priority_level": "3"})
+    empty = normalize_post_item({"caption": "no url"},
+                                {"source_id": "X", "source_account": "@a", "priority_level": "3"})
     check("S7: post tanpa url/shortcode di-skip ({}) ", empty == {})
 
 
@@ -340,6 +360,133 @@ def scenario_8():
     dp.run_post_discovery(scraper2, settings2, paths2)
     check("S8: window dimatikan → onlyPostsNewerThan None",
           scraper2.profile_calls[0][1] is None, str(scraper2.profile_calls[0]))
+
+
+def scenario_10_quota_retry():
+    print("\n[Skenario 10] Kuota habis saat proses queue → item tetap PENDING (di-retry), bukan failed")
+    _, paths, settings = make_env([
+        ("SRC001", "@surabaya", "instagram", "1", "30", "active", "pemkot"),
+    ])
+    scraper = FakeScraper()
+    url1 = "https://www.instagram.com/p/AAA111/"
+    url2 = "https://www.instagram.com/p/BBB222/"
+    scraper.posts_by_profile["https://www.instagram.com/surabaya/"] = [
+        post_item(url=url1, caption="banjir", comments=2),
+        post_item(url=url2, caption="sampah menumpuk", comments=2),
+    ]
+    dp.run_post_discovery(scraper, settings, paths)
+
+    # Simulasikan semua token habis saat memproses komentar
+    scraper.quota_exhausted = True
+    summary = pq.process_pending_queue(scraper, settings, paths)
+
+    df_q = load_post_queue(paths["post_queue_csv"])
+    n_pending = (df_q["status"] == "pending").sum()
+    n_failed = (df_q["status"] == "failed").sum()
+
+    check("S10: auto-stop terpicu (stopped_early)", summary["stopped_early"] is True)
+    check("S10: tidak ada item ditandai 'failed'", n_failed == 0, f"failed={n_failed}")
+    check("S10: semua item kembali 'pending' (bisa di-retry)", n_pending == 2,
+          f"pending={n_pending}/{len(df_q)}")
+    check("S10: total_skipped == 2", summary["total_skipped"] == 2,
+          f"skipped={summary['total_skipped']}")
+    check("S10: belum ada komentar tersimpan", not paths["raw_comments_csv"].exists()
+          or len(load_csv_if_exists(paths["raw_comments_csv"])) == 0)
+
+    # Kuota pulih → run berikutnya harus memproses item yang tadi tertunda
+    scraper.quota_exhausted = False
+    scraper.comments_by_url[url1] = [comment_item("c1", "tolong", shortcode="AAA111")]
+    scraper.comments_by_url[url2] = [comment_item("c2", "diperbaiki", shortcode="BBB222")]
+    summary2 = pq.process_pending_queue(scraper, settings, paths)
+    df_q2 = load_post_queue(paths["post_queue_csv"])
+    df_c2 = load_csv_if_exists(paths["raw_comments_csv"])
+
+    check("S10: setelah kuota pulih, item ter-retry & completed",
+          (df_q2["status"] == "completed").all(), str(df_q2["status"].tolist()))
+    check("S10: komentar yang tadi tertunda akhirnya terambil", len(df_c2) == 2,
+          f"comments={len(df_c2)}")
+
+
+def scenario_11_new_comment_detection():
+    print("\n[Skenario 11] Komentar dibuat SETELAH post ditemukan → ditandai BARU (bukan baseline)")
+    _, paths, settings = make_env([
+        ("SRC001", "@surabaya", "instagram", "1", "30", "active", "pemkot"),
+    ])
+    scraper = FakeScraper()
+    url = "https://www.instagram.com/p/AAA111/"
+    scraper.posts_by_profile["https://www.instagram.com/surabaya/"] = [
+        post_item(url=url, caption="banjir", comments=2)
+    ]
+    dp.run_post_discovery(scraper, settings, paths)
+
+    # Paksa discovered_at ke masa lalu → komentar 2026-05-21 dianggap SETELAH itu
+    df_p = load_csv_if_exists(paths["raw_posts_csv"])
+    df_p["discovered_at"] = "2020-01-01T00:00:00Z"
+    df_p.to_csv(paths["raw_posts_csv"], index=False, encoding="utf-8-sig")
+
+    scraper.comments_by_url[url] = [
+        comment_item("c1", "tolong perbaiki", shortcode="AAA111", ts="2026-05-21T00:00:00Z"),
+    ]
+    summary = pq.process_pending_queue(scraper, settings, paths)
+    df_c = load_csv_if_exists(paths["raw_comments_csv"])
+
+    check("S11: komentar ditandai BARU (is_baseline=false)",
+          (df_c["is_baseline"] == "false").all(), str(df_c["is_baseline"].tolist()))
+    check("S11: total_new_comments == 1", summary["total_new_comments"] == 1,
+          f"new={summary['total_new_comments']}")
+    check("S11: total_baseline_comments == 0", summary["total_baseline_comments"] == 0,
+          f"baseline={summary['total_baseline_comments']}")
+
+
+def _post_count(paths, shortcode):
+    df = load_csv_if_exists(paths["raw_posts_csv"])
+    rows = df[df["post_shortcode"] == shortcode]["comment_count_last_seen"]
+    return rows.iloc[0] if len(rows) else None
+
+
+def scenario_12_deferred_count():
+    print("\n[Skenario 12] #3: comment_count_last_seen hanya maju SETELAH scrape sukses")
+    _, paths, settings = make_env(
+        [("SRC001", "@surabaya", "instagram", "1", "30", "active", "pemkot")],
+        post_discovery={"max_posts_per_source": 10, "only_active_sources": True,
+                        "use_monitoring_window": True, "comments_per_post": 100,
+                        "min_comment_increase": 1},
+    )
+    scraper = FakeScraper()
+    url = "https://www.instagram.com/p/AAA111/"
+    # Run 1: count=5, new_post → proses sukses
+    scraper.posts_by_profile["https://www.instagram.com/surabaya/"] = [
+        post_item(url=url, caption="banjir", comments=5)
+    ]
+    dp.run_post_discovery(scraper, settings, paths)
+    scraper.comments_by_url[url] = [comment_item("c1", "a", shortcode="AAA111")]
+    pq.process_pending_queue(scraper, settings, paths)
+    check("S12: setelah run1, count = 5", _post_count(paths, "AAA111") == "5",
+          f"count={_post_count(paths, 'AAA111')}")
+
+    # Run 2: count naik 5 → 10 (comment_changed). Count HARUS tetap 5 (ditunda).
+    scraper.posts_by_profile["https://www.instagram.com/surabaya/"] = [
+        post_item(url=url, caption="banjir", comments=10)
+    ]
+    dp.run_post_discovery(scraper, settings, paths)
+    check("S12: setelah discovery (sebelum scrape), count masih 5 (ditunda)",
+          _post_count(paths, "AAA111") == "5", f"count={_post_count(paths, 'AAA111')}")
+
+    # Proses queue saat KUOTA HABIS → gagal → count TIDAK boleh maju
+    scraper.quota_exhausted = True
+    pq.process_pending_queue(scraper, settings, paths)
+    check("S12: scrape gagal (kuota) → count tetap 5 (tidak hilang sinyal)",
+          _post_count(paths, "AAA111") == "5", f"count={_post_count(paths, 'AAA111')}")
+
+    # Kuota pulih → scrape sukses → count maju ke 10
+    scraper.quota_exhausted = False
+    scraper.comments_by_url[url] = [
+        comment_item("c1", "a", shortcode="AAA111"),
+        comment_item("c2", "b", shortcode="AAA111"),
+    ]
+    pq.process_pending_queue(scraper, settings, paths)
+    check("S12: setelah scrape sukses, count maju ke 10 (commit)",
+          _post_count(paths, "AAA111") == "10", f"count={_post_count(paths, 'AAA111')}")
 
 
 def scenario_9_flask():
@@ -379,6 +526,9 @@ def main():
     scenario_6()
     scenario_7()
     scenario_8()
+    scenario_10_quota_retry()
+    scenario_11_new_comment_detection()
+    scenario_12_deferred_count()
     scenario_9_flask()
 
     print("\n" + "=" * 64)

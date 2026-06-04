@@ -19,6 +19,34 @@ def now_utc() -> str:
     return datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
 
 
+def parse_timestamp(value):
+    """Parse timestamp ke datetime tz-aware (UTC). Return None jika gagal.
+
+    Tahan beragam format Apify: ISO 8601 (dengan/ tanpa 'Z' atau milidetik) dan
+    Unix epoch (detik) dalam bentuk int/float/str angka.
+    """
+    if value is None:
+        return None
+    s = str(value).strip()
+    if not s:
+        return None
+    # Unix epoch (mis. "1716249600" atau 1716249600)
+    try:
+        if s.replace(".", "", 1).isdigit():
+            return datetime.fromtimestamp(float(s), tz=timezone.utc)
+    except (ValueError, OverflowError, OSError):
+        pass
+    # ISO 8601
+    try:
+        iso = s.replace("Z", "+00:00")
+        dt = datetime.fromisoformat(iso)
+        if dt.tzinfo is None:
+            dt = dt.replace(tzinfo=timezone.utc)
+        return dt.astimezone(timezone.utc)
+    except (ValueError, TypeError):
+        return None
+
+
 def make_sha256(value: str) -> str:
     return hashlib.sha256(value.encode("utf-8")).hexdigest()
 

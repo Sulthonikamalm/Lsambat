@@ -42,6 +42,17 @@ logging.basicConfig(
 )
 logger = logging.getLogger("demo_monitor")
 
+# Bisukan log polling HTTP & WebSocket agar terminal hanya menampilkan event
+# bermakna (toggle, scrape, hasil). Bisa diaktifkan lagi via env var DEBUG_HTTP=1
+# saat butuh debugging request frontend.
+import os as _os
+if _os.getenv("DEBUG_HTTP", "").strip() != "1":
+    logging.getLogger("werkzeug").setLevel(logging.WARNING)
+    logging.getLogger("engineio").setLevel(logging.WARNING)
+    logging.getLogger("socketio").setLevel(logging.WARNING)
+    logging.getLogger("engineio.server").setLevel(logging.WARNING)
+    logging.getLogger("socketio.server").setLevel(logging.WARNING)
+
 # ── Load config & init objects ────────────────────────────────
 
 settings = load_settings()

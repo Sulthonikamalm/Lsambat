@@ -4,7 +4,8 @@ project:
 apify:
   actor_ids:
     instagram: "apify/instagram-scraper"
-    facebook: "apify/facebook-posts-scraper"
+    facebook: "apify/facebook-posts-scraper"            # untuk DISCOVERY postingan FB
+    facebook_comments: "apify/facebook-comments-scraper"  # untuk KOMENTAR FB (actor berbeda)
   token_envs:
     - "APIFY_TOKEN_1"
     - "APIFY_TOKEN_2"
@@ -105,7 +106,7 @@ post_discovery:
   use_monitoring_window: true        # onlyPostsNewerThan = today - monitoring_window_days
   comments_per_post: 100             # limit komentar per post saat proses antrean
   queue_only_relevant: true          # hanya queue postingan high/medium (hemat API call)
-  min_comment_increase: 5            # minimal kenaikan komentar untuk re-queue postingan lama
+  min_comment_increase: 1            # minimal kenaikan komentar untuk re-queue postingan lama (1 = tangkap semua komentar baru)
 
 output:
   data_dir: "data"

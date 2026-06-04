@@ -49,13 +49,11 @@ def detect_new_or_updated_posts(discovered_posts: list, existing_df, min_increas
 
         update_data = {"post_id_hash": pid, "last_checked_at": now_utc()}
 
-        if new_count is not None:
-            update_data["comment_count_last_seen"] = str(new_count)
-
         new_like = post.get("like_count_last_seen", "")
         if new_like:
             update_data["like_count_last_seen"] = new_like
 
+        is_comment_changed = False
         if (
             new_count is not None
             and old_count is not None
@@ -63,6 +61,7 @@ def detect_new_or_updated_posts(discovered_posts: list, existing_df, min_increas
         ):
             increase = new_count - old_count
             if increase >= min_increase:
+                is_comment_changed = True
                 comment_changed_posts.append(post)
                 logger.info(
                     f"comment_count_changed {pid[:12]}: {old_count} -> {new_count} "
@@ -82,6 +81,15 @@ def detect_new_or_updated_posts(discovered_posts: list, existing_df, min_increas
             logger.info(
                 f"count_decreased_or_hidden {pid[:12]}: {old_count} -> {new_count}"
             )
+
+        # #3: JANGAN majukan comment_count_last_seen untuk post yang akan di-queue
+        # ulang (comment_changed). Count baru di-commit HANYA setelah komentar
+        # berhasil di-scrape (write-back di process_queue). Jika scrape gagal,
+        # count tetap lama → kenaikan terdeteksi lagi pada run berikutnya (retry),
+        # sehingga komentar tidak hilang. Untuk post yang TIDAK berubah/komentar
+        # turun, count aman langsung diperbarui.
+        if new_count is not None and not is_comment_changed:
+            update_data["comment_count_last_seen"] = str(new_count)
 
         updated_posts.append(update_data)
 

@@ -5,6 +5,8 @@ Menjalankan flow: Discover → Queue → Comments dalam satu alur.
 """
 
 import logging
+import time
+from datetime import datetime
 
 from helpers.rate_limiter import get_current_tier
 from helpers.history import record_scrape
@@ -12,6 +14,8 @@ from discover_posts import run_post_discovery
 from process_queue import process_pending_queue
 
 logger = logging.getLogger("demo_monitor")
+
+_BANNER = "=" * 70
 
 
 def run_unified_scrape(scraper, settings, paths, history_path,
@@ -31,6 +35,12 @@ def run_unified_scrape(scraper, settings, paths, history_path,
         socketio: SocketIO instance
         trigger: "manual" atau "auto"
     """
+    _start_ts = time.time()
+    _label = "AUTO" if trigger == "auto" else "MANUAL"
+    _ts_str = datetime.now().strftime("%H:%M:%S")
+    logger.info(_BANNER)
+    logger.info(f"  ▶ [{_label}] SCRAPE START — {_ts_str}")
+    logger.info(_BANNER)
     try:
         # Phase 1: Discover
         emit_log("Langkah 1/2: Mencari postingan terbaru dari semua akun...", "info")
@@ -48,6 +58,7 @@ def run_unified_scrape(scraper, settings, paths, history_path,
         scrape_settings["post_discovery"]["comments_per_post"] = tier["comments_per_post"]
 
         api_calls_before = scraper.total_api_calls
+        success_before = scraper.successful_api_calls
 
         discovery_summary = run_post_discovery(
             scraper, scrape_settings, paths, stop_event=stop_event
@@ -82,7 +93,8 @@ def run_unified_scrape(scraper, settings, paths, history_path,
             emit_log("Tidak ada postingan baru yang perlu di-scrape komentarnya.", "info")
             _record_and_emit(
                 scraper, settings, history_path, trigger, discovery_summary,
-                api_calls_before, 0, total_found, total_new, socketio
+                api_calls_before, 0, total_found, total_new, socketio,
+                success_before=success_before
             )
             return
 
@@ -94,23 +106,31 @@ def run_unified_scrape(scraper, settings, paths, history_path,
         )
 
         total_comments = queue_summary.get("total_new_comments", 0)
+        total_baseline = queue_summary.get("total_baseline_comments", 0)
 
         combined_summary = {
             "total_posts_discovered": total_found,
             "total_new_posts": total_new,
             "total_new_comments": total_comments,
+            "total_baseline_comments": total_baseline,
             "skipped_low_relevance": discovery_summary.get("skipped_low_relevance", 0),
         }
         _record_and_emit(
             scraper, settings, history_path, trigger, combined_summary,
             api_calls_before, total_comments, total_found, total_new, socketio,
-            queue_summary=queue_summary
+            queue_summary=queue_summary, success_before=success_before
         )
 
     except Exception as e:
         logger.error(f"Unified scrape error: {e}", exc_info=True)
         emit_log(f"❌ Terjadi kesalahan: {str(e)[:200]}", "error")
         socketio.emit("scrape_complete", {"success": False, "error": str(e)[:200]})
+    finally:
+        _elapsed = int(time.time() - _start_ts)
+        _end_str = datetime.now().strftime("%H:%M:%S")
+        logger.info(_BANNER)
+        logger.info(f"  ■ [{_label}] SCRAPE END — {_end_str} (durasi {_elapsed}s)")
+        logger.info(_BANNER)
 
 
 def _emit_discovered_posts(socketio, discovery_summary):
@@ -155,14 +175,28 @@ def _process_queue(scraper, settings, paths, stop_event, emit_log, socketio):
 
 def _record_and_emit(scraper, settings, history_path, trigger, summary,
                      api_calls_before, total_comments, total_found, total_new,
-                     socketio, queue_summary=None):
-    """Record history dan emit scrape_complete."""
-    api_calls_after = scraper.total_api_calls
-    session_calls = api_calls_after - api_calls_before
-    session_cost = session_calls * settings["apify"].get("estimated_cost_per_call", 0.032)
-    record_scrape(history_path, trigger, summary,
-                  api_calls_session=session_calls,
-                  estimated_cost_session=session_cost)
+                     socketio, queue_summary=None, success_before=0):
+    """Record history dan emit scrape_complete.
+
+    Hanya mencatat ke history (dan menghitung biaya) bila ada minimal satu
+    panggilan API yang BERHASIL/billable. Run yang gagal total karena kuota habis
+    (semua HTTP 402/403) tidak melakukan kerja apa pun, sehingga tidak boleh
+    menghabiskan jatah rate-limit mingguan maupun dihitung biayanya.
+    """
+    billable_calls = scraper.successful_api_calls - success_before
+
+    if billable_calls <= 0:
+        logger.info(
+            "Scrape tidak menghasilkan panggilan API billable (kemungkinan kuota "
+            "habis). Tidak dicatat ke history dan tidak menghitung rate-limit."
+        )
+    else:
+        session_cost = billable_calls * settings["apify"].get(
+            "estimated_cost_per_call", 0.032
+        )
+        record_scrape(history_path, trigger, summary,
+                      api_calls_session=billable_calls,
+                      estimated_cost_session=session_cost)
 
     result = {
         "success": True,
@@ -175,6 +209,7 @@ def _record_and_emit(scraper, settings, history_path, trigger, summary,
         result["completed"] = queue_summary.get("total_completed", 0)
         result["failed"] = queue_summary.get("total_failed", 0)
         result["skipped"] = queue_summary.get("total_skipped", 0)
+        result["baseline_comments"] = queue_summary.get("total_baseline_comments", 0)
         result["stopped_early"] = queue_summary.get("stopped_early", False)
 
     socketio.emit("scrape_complete", result)

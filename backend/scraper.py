@@ -33,6 +33,7 @@ class ApifyScraper:
         self.cost_per_call = cost_per_call
         self._call_count = 0
         self.total_api_calls = 0
+        self.successful_api_calls = 0  # hanya panggilan billable (HTTP 200/201)
         self.exhausted_tokens = set()
 
         self._usage_log_path = Path(usage_log_path) if usage_log_path else None
@@ -194,6 +195,7 @@ class ApifyScraper:
                 status_code = resp.status_code
 
                 if status_code in (200, 201):
+                    self.successful_api_calls += 1
                     items = resp.json()
                     if isinstance(items, list):
                         valid = [i for i in items if "error" not in i]
@@ -306,12 +308,17 @@ class ApifyScraper:
         return result
 
     def scrape_fb_comments(self, post_url: str, limit: int = 50) -> dict:
-        """Scrape komentar dari satu post Facebook."""
+        """Scrape komentar dari satu post Facebook.
+
+        Memakai actor KOMENTAR khusus (apify/facebook-comments-scraper) via
+        platform key 'facebook_comments' — berbeda dari actor discovery postingan.
+        Input cocok: startUrls + resultsLimit.
+        """
         actor_input = {
             "startUrls": [{"url": post_url}],
             "resultsLimit": limit,
         }
         result = self._call_apify(actor_input, "comments", post_url,
-                                  platform="facebook")
+                                  platform="facebook_comments")
         result["comments"] = result.pop("items")
         return result

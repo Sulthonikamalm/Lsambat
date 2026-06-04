@@ -18,6 +18,9 @@ QUEUE_COLUMNS = [
     "queue_id", "post_id_hash", "source_id", "source_account",
     "post_url", "queue_reason", "priority_level", "scheduled_at",
     "last_run_at", "status", "error_message",
+    # jumlah komentar yang teramati saat di-queue; dipakai untuk meng-update
+    # comment_count_last_seen di raw_posts HANYA setelah scrape sukses (#3).
+    "observed_comment_count",
 ]
 
 VALID_QUEUE_REASONS = {
@@ -105,6 +108,7 @@ def add_to_post_queue(df_queue, post: dict, queue_reason: str) -> pd.DataFrame:
         "last_run_at": "",
         "status": "pending",
         "error_message": "",
+        "observed_comment_count": str(post.get("comment_count_last_seen", "") or ""),
     }
 
     new_row = pd.DataFrame([new_entry])

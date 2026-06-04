@@ -17,6 +17,7 @@ from stage4_utils import (
     load_csv_if_exists,
     safe_write_csv,
     url_shortcode,
+    parse_timestamp,
 )
 from post_queue import (
     load_post_queue,
@@ -31,12 +32,16 @@ COMMENT_COLUMNS = [
     "comment_id_hash", "comment_id", "post_id_hash", "post_url",
     "post_shortcode", "source_account", "comment_text", "comment_created_at",
     "scraped_at", "queue_id", "scraping_status",
+    # #2: "true" jika komentar dibuat SEBELUM post pertama kali kita temukan
+    # (komentar lama/baseline) → bukan keluhan baru. Dataset "hanya keluhan baru"
+    # = filter is_baseline == "false".
+    "is_baseline",
 ]
 
 COMMENT_TEXT_CANDIDATES = ["text", "comment", "commentText", "comment_text", "body", "content"]
 COMMENT_ID_CANDIDATES = ["id", "cid", "commentId", "comment_id", "pk"]
 COMMENT_TS_CANDIDATES = ["timestamp", "createdAt", "created_at", "takenAt", "date"]
-COMMENT_URL_CANDIDATES = ["postUrl", "post_url", "url", "permalink"]
+COMMENT_URL_CANDIDATES = ["postUrl", "post_url", "url", "permalink", "facebookUrl"]
 COMMENT_SHORTCODE_CANDIDATES = ["shortCode", "shortcode", "code"]
 
 
@@ -71,6 +76,14 @@ def _normalize_comment(item: dict, post_row: dict, queue_id: str) -> dict:
             f"{platform}|{post_url}|{text}|{created_at}"
         )
 
+    # #2 Baseline tagging: komentar dianggap "baseline" (lama) bila dibuat sebelum
+    # post pertama kali kita temukan (discovered_at). Jika salah satu timestamp tak
+    # bisa diparse, default ke "false" (anggap baru) — lebih aman menampilkan
+    # keluhan daripada menyembunyikannya.
+    disc_dt = parse_timestamp(post_row.get("discovered_at", ""))
+    comment_dt = parse_timestamp(created_at)
+    is_baseline = "true" if (disc_dt and comment_dt and comment_dt < disc_dt) else "false"
+
     return {
         "comment_id_hash": comment_id_hash,
         "comment_id": comment_id,
@@ -83,6 +96,7 @@ def _normalize_comment(item: dict, post_row: dict, queue_id: str) -> dict:
         "scraped_at": now_utc(),
         "queue_id": queue_id,
         "scraping_status": "new",
+        "is_baseline": is_baseline,
     }
 
 
@@ -107,11 +121,14 @@ def _append_comments(new_rows: list, comments_csv_path):
 
 
 def process_one_queue_item(
-    scraper, queue_row, paths, comments_limit, existing_hashes
+    scraper, queue_row, paths, comments_limit, existing_hashes, discovered_at=""
 ) -> dict:
     """
     Proses satu entry queue. Return dict ringkasan untuk entry ini.
     Tidak meng-update CSV queue (dikelola pemanggil).
+
+    discovered_at: timestamp post pertama kali ditemukan (dari raw_posts),
+    dipakai untuk menandai komentar baseline vs baru (#2).
     """
     queue_id = queue_row.get("queue_id", "")
     post_url = str(queue_row.get("post_url", "")).strip()
@@ -123,8 +140,10 @@ def process_one_queue_item(
         "post_url": post_url,
         "source_account": source_account,
         "status": "failed",
+        "api_status": "",
         "error_message": "",
         "new_comments": 0,
+        "baseline_comments": 0,
         "duplicates": 0,
         "found": 0,
     }
@@ -137,6 +156,10 @@ def process_one_queue_item(
     # Detect platform dari URL postingan
     platform = "facebook" if "facebook.com" in post_url else "instagram"
     result = scraper.scrape_comments(post_url, limit=comments_limit, platform=platform)
+
+    # Propagasikan api_status mentah agar pemanggil bisa deteksi kuota habis
+    # secara andal (jangan bergantung pada pencocokan string error_message).
+    out["api_status"] = result.get("api_status", "")
 
     if result["api_status"] != "success":
         out["error_message"] = result.get("error_message", "api error")
@@ -153,9 +176,11 @@ def process_one_queue_item(
         "post_shortcode": target_sc,
         "source_account": source_account,
         "platform": platform,
+        "discovered_at": discovered_at,
     }
 
     new_rows = []
+    baseline_count = 0
     for item in comments:
         # Cocokkan ke post via shortcode (tahan /p/ vs /reel/). Jika komentar tidak
         # membawa info shortcode/url, anggap milik post yang sedang di-scrape.
@@ -170,14 +195,19 @@ def process_one_queue_item(
             continue
         existing_hashes.add(h)
         new_rows.append(normalized)
+        if normalized["is_baseline"] == "true":
+            baseline_count += 1
 
-    out["new_comments"] = len(new_rows)
+    # Semua komentar baru disimpan ke dataset (tagged), tapi "new_comments" yang
+    # dilaporkan = hanya yang non-baseline (keluhan benar-benar baru).
+    out["baseline_comments"] = baseline_count
+    out["new_comments"] = len(new_rows) - baseline_count
     _append_comments(new_rows, paths["raw_comments_csv"])
 
     out["status"] = "completed"
     logger.info(
         f"[{queue_id}] found={out['found']} new={out['new_comments']} "
-        f"dup={out['duplicates']}"
+        f"baseline={baseline_count} dup={out['duplicates']}"
     )
     return out
 
@@ -203,6 +233,7 @@ def process_pending_queue(scraper, settings, paths, on_item=None, stop_event=Non
         "total_failed": 0,
         "total_skipped": 0,
         "total_new_comments": 0,
+        "total_baseline_comments": 0,
         "items": [],
         "stopped_early": False,
         "stop_reason": "",
@@ -214,6 +245,15 @@ def process_pending_queue(scraper, settings, paths, on_item=None, stop_event=Non
 
     existing_hashes = _load_existing_comment_hashes(paths["raw_comments_csv"])
     processed_count = 0
+
+    # #2 + #3: muat raw_posts sekali untuk (a) peta discovered_at → baseline tagging,
+    # dan (b) write-back comment_count_last_seen setelah scrape sukses.
+    df_posts = load_csv_if_exists(paths["raw_posts_csv"])
+    discovered_map = {}
+    if not df_posts.empty and "post_id_hash" in df_posts.columns:
+        for _, prow in df_posts.iterrows():
+            discovered_map[prow.get("post_id_hash", "")] = prow.get("discovered_at", "")
+    posts_dirty = False
 
     for _, queue_row in pending.iterrows():
         queue_id = queue_row.get("queue_id", "")
@@ -234,8 +274,12 @@ def process_pending_queue(scraper, settings, paths, on_item=None, stop_event=Non
         # Tandai running (in-memory only, batch save at end)
         df_queue = update_queue_status(df_queue, queue_id, "running")
 
+        post_id_hash = queue_row.get("post_id_hash", "")
+        discovered_at = discovered_map.get(post_id_hash, "")
+
         item_result = process_one_queue_item(
-            scraper, queue_row, paths, comments_limit, existing_hashes
+            scraper, queue_row, paths, comments_limit, existing_hashes,
+            discovered_at=discovered_at
         )
         processed_count += 1
 
@@ -243,6 +287,15 @@ def process_pending_queue(scraper, settings, paths, on_item=None, stop_event=Non
             df_queue = update_queue_status(df_queue, queue_id, "completed")
             summary["total_completed"] += 1
             summary["total_new_comments"] += item_result["new_comments"]
+            summary["total_baseline_comments"] += item_result.get("baseline_comments", 0)
+
+            # #3: commit comment_count_last_seen ke raw_posts HANYA setelah sukses.
+            observed = str(queue_row.get("observed_comment_count", "") or "").strip()
+            if observed and not df_posts.empty and "post_id_hash" in df_posts.columns:
+                mask = df_posts["post_id_hash"] == post_id_hash
+                if mask.any():
+                    df_posts.loc[mask, "comment_count_last_seen"] = observed
+                    posts_dirty = True
         else:
             # Cek apakah gagal karena kuota habis
             error_msg = item_result.get("error_message", "")
@@ -254,25 +307,38 @@ def process_pending_queue(scraper, settings, paths, on_item=None, stop_event=Non
             if is_quota_error or item_result.get("api_status") in (
                 "quota_exceeded", "all_tokens_exhausted"
             ):
-                # AUTO-STOP: kuota habis = semua call berikutnya pasti gagal
-                df_queue = update_queue_status(
-                    df_queue, queue_id, "failed",
-                    error_message="Kuota API habis",
-                )
-                summary["total_failed"] += 1
+                # AUTO-STOP: kuota habis = semua call berikutnya pasti gagal.
+                # Item ini dikembalikan ke 'pending' (bukan 'failed') agar
+                # otomatis dicoba lagi pada run berikutnya saat kuota tersedia —
+                # get_pending_queue hanya me-retry status 'pending', sehingga
+                # 'failed' akan hilang permanen dan komentarnya tak pernah terambil.
+                df_queue = update_queue_status(df_queue, queue_id, "pending")
 
-                remaining = len(pending) - processed_count
+                # Sisa item setelah item ini belum disentuh (masih 'pending').
+                # Total yang ditunda = sisa + item saat ini.
+                remaining_after = len(pending) - processed_count
+                skipped_total = remaining_after + 1
                 logger.warning(
-                    f"⚠️ Kuota API habis. Menghentikan {remaining} antrean tersisa. "
-                    f"Data yang sudah diambil tetap tersimpan."
+                    f"⚠️ Kuota API habis. Menghentikan antrean. "
+                    f"{skipped_total} postingan akan dilanjutkan otomatis pada run "
+                    f"berikutnya. Data yang sudah diambil tetap tersimpan."
                 )
                 summary["stopped_early"] = True
                 summary["stop_reason"] = (
-                    f"Kuota API habis. {remaining} postingan belum diproses."
+                    f"Kuota API habis. {skipped_total} postingan belum diproses "
+                    f"(akan dilanjutkan otomatis)."
                 )
-                summary["total_skipped"] = remaining
+                summary["total_skipped"] = skipped_total
+
+                # Perjelas item agar UI menampilkan pesan kuota yang benar
+                # (bukan '❌ Gagal') dan tidak terhitung sebagai kegagalan permanen.
+                item_result["status"] = "skipped"
+                item_result["error_message"] = "Kuota API habis — akan dilanjutkan nanti"
 
                 save_post_queue(df_queue, paths["post_queue_csv"])
+                if posts_dirty:
+                    safe_write_csv(df_posts, paths["raw_posts_csv"],
+                                   "raw_instagram_posts (count update)", logger)
                 summary["items"].append(item_result)
                 if on_item:
                     on_item(item_result)
@@ -291,6 +357,9 @@ def process_pending_queue(scraper, settings, paths, on_item=None, stop_event=Non
 
     # Batch save: tulis CSV sekali di akhir (hemat I/O)
     save_post_queue(df_queue, paths["post_queue_csv"])
+    if posts_dirty:
+        safe_write_csv(df_posts, paths["raw_posts_csv"],
+                       "raw_instagram_posts (count update)", logger)
 
     logger.info(
         f"Antrean selesai: {summary['total_completed']} berhasil, "
