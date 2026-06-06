@@ -1,0 +1,15 @@
+[
+  {
+    "timestamp": "2026-06-06T05:46:10Z",
+    "trigger": "manual",
+    "posts_discovered": 230,
+    "new_posts": 230,
+    "new_comments": 30,
+    "baseline_comments": 2579,
+    "saved_comments": 2609,
+    "skipped_low_relevance": 9,
+    "skipped_zero_comments": 0,
+    "api_calls_session": 208,
+    "estimated_cost_session": 6.656
+  }
+]

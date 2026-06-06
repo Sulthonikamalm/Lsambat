@@ -1,0 +1,2092 @@
+[
+  {
+    "timestamp": "2026-06-06T05:06:45Z",
+    "method": "posts",
+    "target_url": "https://www.instagram.com/ericahyadi_/",
+    "token_index": 1,
+    "status_code": 201,
+    "result_count": 50,
+    "api_status": "success",
+    "estimated_cost": 0.032
+  },
+  {
+    "timestamp": "2026-06-06T05:07:20Z",
+    "method": "posts",
+    "target_url": "https://www.instagram.com/cakj1/",
+    "token_index": 2,
+    "status_code": 201,
+    "result_count": 50,
+    "api_status": "success",
+    "estimated_cost": 0.032
+  },
+  {
+    "timestamp": "2026-06-06T05:07:54Z",
+    "method": "posts",
+    "target_url": "https://www.instagram.com/dishubsurabaya/",
+    "token_index": 3,
+    "status_code": 201,
+    "result_count": 50,
+    "api_status": "success",
+    "estimated_cost": 0.032
+  },
+  {
+    "timestamp": "2026-06-06T05:08:40Z",
+    "method": "posts",
+    "target_url": "https://www.instagram.com/satgasviralsby/",
+    "token_index": 4,
+    "status_code": 201,
+    "result_count": 30,
+    "api_status": "success",
+    "estimated_cost": 0.032
+  },
+  {
+    "timestamp": "2026-06-06T05:09:36Z",
+    "method": "posts",
+    "target_url": "https://www.instagram.com/aslisuroboyo/",
+    "token_index": 5,
+    "status_code": 201,
+    "result_count": 50,
+    "api_status": "success",
+    "estimated_cost": 0.032
+  },
+  {
+    "timestamp": "2026-06-06T05:09:45Z",
+    "method": "comments",
+    "target_url": "https://www.instagram.com/p/DY2NiYRvphs/",
+    "token_index": 1,
+    "status_code": 201,
+    "result_count": 5,
+    "api_status": "success",
+    "estimated_cost": 0.032
+  },
+  {
+    "timestamp": "2026-06-06T05:09:56Z",
+    "method": "comments",
+    "target_url": "https://www.instagram.com/p/DYy78rDvRNp/",
+    "token_index": 2,
+    "status_code": 201,
+    "result_count": 15,
+    "api_status": "success",
+    "estimated_cost": 0.032
+  },
+  {
+    "timestamp": "2026-06-06T05:10:10Z",
+    "method": "comments",
+    "target_url": "https://www.instagram.com/p/DY6kxinv2tw/",
+    "token_index": 3,
+    "status_code": 201,
+    "result_count": 15,
+    "api_status": "success",
+    "estimated_cost": 0.032
+  },
+  {
+    "timestamp": "2026-06-06T05:10:25Z",
+    "method": "comments",
+    "target_url": "https://www.instagram.com/p/DZFWAoUvskg/",
+    "token_index": 4,
+    "status_code": 201,
+    "result_count": 15,
+    "api_status": "success",
+    "estimated_cost": 0.032
+  },
+  {
+    "timestamp": "2026-06-06T05:10:39Z",
+    "method": "comments",
+    "target_url": "https://www.instagram.com/p/DZH4gwWPdjG/",
+    "token_index": 5,
+    "status_code": 201,
+    "result_count": 15,
+    "api_status": "success",
+    "estimated_cost": 0.032
+  },
+  {
+    "timestamp": "2026-06-06T05:10:50Z",
+    "method": "comments",
+    "target_url": "https://www.instagram.com/p/DYwloKQvZIk/",
+    "token_index": 1,
+    "status_code": 201,
+    "result_count": 15,
+    "api_status": "success",
+    "estimated_cost": 0.032
+  },
+  {
+    "timestamp": "2026-06-06T05:10:58Z",
+    "method": "comments",
+    "target_url": "https://www.instagram.com/p/DZCS_q8Ph1z/",
+    "token_index": 2,
+    "status_code": 201,
+    "result_count": 15,
+    "api_status": "success",
+    "estimated_cost": 0.032
+  },
+  {
+    "timestamp": "2026-06-06T05:11:05Z",
+    "method": "comments",
+    "target_url": "https://www.instagram.com/p/DZNClf7PeNs/",
+    "token_index": 3,
+    "status_code": 201,
+    "result_count": 5,
+    "api_status": "success",
+    "estimated_cost": 0.032
+  },
+  {
+    "timestamp": "2026-06-06T05:11:15Z",
+    "method": "comments",
+    "target_url": "https://www.instagram.com/p/DYtdlbivOFb/",
+    "token_index": 4,
+    "status_code": 201,
+    "result_count": 15,
+    "api_status": "success",
+    "estimated_cost": 0.032
+  },
+  {
+    "timestamp": "2026-06-06T05:11:26Z",
+    "method": "comments",
+    "target_url": "https://www.instagram.com/p/DY4Nb9QPoD5/",
+    "token_index": 5,
+    "status_code": 201,
+    "result_count": 15,
+    "api_status": "success",
+    "estimated_cost": 0.032
+  },
+  {
+    "timestamp": "2026-06-06T05:11:34Z",
+    "method": "comments",
+    "target_url": "https://www.instagram.com/p/DYeqhS7P0ZF/",
+    "token_index": 1,
+    "status_code": 201,
+    "result_count": 15,
+    "api_status": "success",
+    "estimated_cost": 0.032
+  },
+  {
+    "timestamp": "2026-06-06T05:11:48Z",
+    "method": "comments",
+    "target_url": "https://www.instagram.com/p/DYg20tivrGF/",
+    "token_index": 2,
+    "status_code": 201,
+    "result_count": 15,
+    "api_status": "success",
+    "estimated_cost": 0.032
+  },
+  {
+    "timestamp": "2026-06-06T05:11:56Z",
+    "method": "comments",
+    "target_url": "https://www.instagram.com/p/DYjQqKqv0H0/",
+    "token_index": 3,
+    "status_code": 201,
+    "result_count": 15,
+    "api_status": "success",
+    "estimated_cost": 0.032
+  },
+  {
+    "timestamp": "2026-06-06T05:12:08Z",
+    "method": "comments",
+    "target_url": "https://www.instagram.com/p/DYZRDMgveth/",
+    "token_index": 4,
+    "status_code": 201,
+    "result_count": 15,
+    "api_status": "success",
+    "estimated_cost": 0.032
+  },
+  {
+    "timestamp": "2026-06-06T05:12:21Z",
+    "method": "comments",
+    "target_url": "https://www.instagram.com/p/DYd7bZYvHou/",
+    "token_index": 5,
+    "status_code": 201,
+    "result_count": 15,
+    "api_status": "success",
+    "estimated_cost": 0.032
+  },
+  {
+    "timestamp": "2026-06-06T05:12:30Z",
+    "method": "comments",
+    "target_url": "https://www.instagram.com/p/DYWVQE4PKr2/",
+    "token_index": 1,
+    "status_code": 201,
+    "result_count": 15,
+    "api_status": "success",
+    "estimated_cost": 0.032
+  },
+  {
+    "timestamp": "2026-06-06T05:12:43Z",
+    "method": "comments",
+    "target_url": "https://www.instagram.com/p/DYT9wKmvQha/",
+    "token_index": 2,
+    "status_code": 201,
+    "result_count": 15,
+    "api_status": "success",
+    "estimated_cost": 0.032
+  },
+  {
+    "timestamp": "2026-06-06T05:12:58Z",
+    "method": "comments",
+    "target_url": "https://www.instagram.com/p/DYOuwpYPiRo/",
+    "token_index": 3,
+    "status_code": 201,
+    "result_count": 15,
+    "api_status": "success",
+    "estimated_cost": 0.032
+  },
+  {
+    "timestamp": "2026-06-06T05:13:11Z",
+    "method": "comments",
+    "target_url": "https://www.instagram.com/p/DYmcKnYv7Or/",
+    "token_index": 4,
+    "status_code": 201,
+    "result_count": 15,
+    "api_status": "success",
+    "estimated_cost": 0.032
+  },
+  {
+    "timestamp": "2026-06-06T05:13:24Z",
+    "method": "comments",
+    "target_url": "https://www.instagram.com/p/DYq3qTdvvDY/",
+    "token_index": 5,
+    "status_code": 201,
+    "result_count": 15,
+    "api_status": "success",
+    "estimated_cost": 0.032
+  },
+  {
+    "timestamp": "2026-06-06T05:13:35Z",
+    "method": "comments",
+    "target_url": "https://www.instagram.com/p/DYReOgJvddS/",
+    "token_index": 1,
+    "status_code": 201,
+    "result_count": 15,
+    "api_status": "success",
+    "estimated_cost": 0.032
+  },
+  {
+    "timestamp": "2026-06-06T05:13:48Z",
+    "method": "comments",
+    "target_url": "https://www.instagram.com/p/DYHtcmbPsym/",
+    "token_index": 2,
+    "status_code": 201,
+    "result_count": 15,
+    "api_status": "success",
+    "estimated_cost": 0.032
+  },
+  {
+    "timestamp": "2026-06-06T05:14:01Z",
+    "method": "comments",
+    "target_url": "https://www.instagram.com/p/DX9QTwyvcrv/",
+    "token_index": 3,
+    "status_code": 201,
+    "result_count": 15,
+    "api_status": "success",
+    "estimated_cost": 0.032
+  },
+  {
+    "timestamp": "2026-06-06T05:14:12Z",
+    "method": "comments",
+    "target_url": "https://www.instagram.com/p/DYBmnrmvnVX/",
+    "token_index": 4,
+    "status_code": 201,
+    "result_count": 15,
+    "api_status": "success",
+    "estimated_cost": 0.032
+  },
+  {
+    "timestamp": "2026-06-06T05:14:27Z",
+    "method": "comments",
+    "target_url": "https://www.instagram.com/p/DYEZmoRvMS6/",
+    "token_index": 5,
+    "status_code": 201,
+    "result_count": 15,
+    "api_status": "success",
+    "estimated_cost": 0.032
+  },
+  {
+    "timestamp": "2026-06-06T05:15:12Z",
+    "method": "comments",
+    "target_url": "https://www.instagram.com/p/DX__7OtPki-/",
+    "token_index": 1,
+    "status_code": 201,
+    "result_count": 15,
+    "api_status": "success",
+    "estimated_cost": 0.032
+  },
+  {
+    "timestamp": "2026-06-06T05:15:22Z",
+    "method": "comments",
+    "target_url": "https://www.instagram.com/p/DYE33a2vR_x/",
+    "token_index": 2,
+    "status_code": 201,
+    "result_count": 15,
+    "api_status": "success",
+    "estimated_cost": 0.032
+  },
+  {
+    "timestamp": "2026-06-06T05:15:30Z",
+    "method": "comments",
+    "target_url": "https://www.instagram.com/p/DYCi65vyMKq/",
+    "token_index": 3,
+    "status_code": 201,
+    "result_count": 15,
+    "api_status": "success",
+    "estimated_cost": 0.032
+  },
+  {
+    "timestamp": "2026-06-06T05:15:43Z",
+    "method": "comments",
+    "target_url": "https://www.instagram.com/p/DZKf76rJ3SG/",
+    "token_index": 4,
+    "status_code": 201,
+    "result_count": 15,
+    "api_status": "success",
+    "estimated_cost": 0.032
+  },
+  {
+    "timestamp": "2026-06-06T05:15:55Z",
+    "method": "comments",
+    "target_url": "https://www.instagram.com/p/DYM4VSxPvKt/",
+    "token_index": 5,
+    "status_code": 201,
+    "result_count": 15,
+    "api_status": "success",
+    "estimated_cost": 0.032
+  },
+  {
+    "timestamp": "2026-06-06T05:16:06Z",
+    "method": "comments",
+    "target_url": "https://www.instagram.com/p/DYJnBtajx4o/",
+    "token_index": 1,
+    "status_code": 201,
+    "result_count": 15,
+    "api_status": "success",
+    "estimated_cost": 0.032
+  },
+  {
+    "timestamp": "2026-06-06T05:16:22Z",
+    "method": "comments",
+    "target_url": "https://www.instagram.com/p/DYMaFUtPRQe/",
+    "token_index": 2,
+    "status_code": 201,
+    "result_count": 15,
+    "api_status": "success",
+    "estimated_cost": 0.032
+  },
+  {
+    "timestamp": "2026-06-06T05:16:30Z",
+    "method": "comments",
+    "target_url": "https://www.instagram.com/p/DXp_7pJD56w/",
+    "token_index": 3,
+    "status_code": 201,
+    "result_count": 15,
+    "api_status": "success",
+    "estimated_cost": 0.032
+  },
+  {
+    "timestamp": "2026-06-06T05:16:39Z",
+    "method": "comments",
+    "target_url": "https://www.instagram.com/p/DYhbfzfPDIb/",
+    "token_index": 4,
+    "status_code": 201,
+    "result_count": 15,
+    "api_status": "success",
+    "estimated_cost": 0.032
+  },
+  {
+    "timestamp": "2026-06-06T05:16:52Z",
+    "method": "comments",
+    "target_url": "https://www.instagram.com/p/DXYaxU1jwEe/",
+    "token_index": 5,
+    "status_code": 201,
+    "result_count": 15,
+    "api_status": "success",
+    "estimated_cost": 0.032
+  },
+  {
+    "timestamp": "2026-06-06T05:17:03Z",
+    "method": "comments",
+    "target_url": "https://www.instagram.com/p/DXZOJuCD9zK/",
+    "token_index": 1,
+    "status_code": 201,
+    "result_count": 15,
+    "api_status": "success",
+    "estimated_cost": 0.032
+  },
+  {
+    "timestamp": "2026-06-06T05:17:19Z",
+    "method": "comments",
+    "target_url": "https://www.instagram.com/p/DXp-qY6D7lb/",
+    "token_index": 2,
+    "status_code": 201,
+    "result_count": 15,
+    "api_status": "success",
+    "estimated_cost": 0.032
+  },
+  {
+    "timestamp": "2026-06-06T05:17:28Z",
+    "method": "comments",
+    "target_url": "https://www.instagram.com/p/DXgvIRmj7D0/",
+    "token_index": 3,
+    "status_code": 201,
+    "result_count": 15,
+    "api_status": "success",
+    "estimated_cost": 0.032
+  },
+  {
+    "timestamp": "2026-06-06T05:17:36Z",
+    "method": "comments",
+    "target_url": "https://www.instagram.com/p/DXv6k3bSWOk/",
+    "token_index": 4,
+    "status_code": 201,
+    "result_count": 15,
+    "api_status": "success",
+    "estimated_cost": 0.032
+  },
+  {
+    "timestamp": "2026-06-06T05:17:52Z",
+    "method": "comments",
+    "target_url": "https://www.instagram.com/p/DXjfExJj6U4/",
+    "token_index": 5,
+    "status_code": 201,
+    "result_count": 15,
+    "api_status": "success",
+    "estimated_cost": 0.032
+  },
+  {
+    "timestamp": "2026-06-06T05:18:03Z",
+    "method": "comments",
+    "target_url": "https://www.instagram.com/p/DXeKXjmj3mc/",
+    "token_index": 1,
+    "status_code": 201,
+    "result_count": 15,
+    "api_status": "success",
+    "estimated_cost": 0.032
+  },
+  {
+    "timestamp": "2026-06-06T05:18:16Z",
+    "method": "comments",
+    "target_url": "https://www.instagram.com/p/DXzF4MVPY72/",
+    "token_index": 2,
+    "status_code": 201,
+    "result_count": 15,
+    "api_status": "success",
+    "estimated_cost": 0.032
+  },
+  {
+    "timestamp": "2026-06-06T05:18:26Z",
+    "method": "comments",
+    "target_url": "https://www.instagram.com/p/DXhFJcYj9JH/",
+    "token_index": 3,
+    "status_code": 201,
+    "result_count": 15,
+    "api_status": "success",
+    "estimated_cost": 0.032
+  },
+  {
+    "timestamp": "2026-06-06T05:19:12Z",
+    "method": "comments",
+    "target_url": "https://www.instagram.com/p/DXtmHQCD58t/",
+    "token_index": 4,
+    "status_code": 201,
+    "result_count": 15,
+    "api_status": "success",
+    "estimated_cost": 0.032
+  },
+  {
+    "timestamp": "2026-06-06T05:19:21Z",
+    "method": "comments",
+    "target_url": "https://www.instagram.com/p/DXmG2iTj__o/",
+    "token_index": 5,
+    "status_code": 201,
+    "result_count": 15,
+    "api_status": "success",
+    "estimated_cost": 0.032
+  },
+  {
+    "timestamp": "2026-06-06T05:19:29Z",
+    "method": "comments",
+    "target_url": "https://www.instagram.com/p/DX8W3lgPpLv/",
+    "token_index": 1,
+    "status_code": 201,
+    "result_count": 15,
+    "api_status": "success",
+    "estimated_cost": 0.032
+  },
+  {
+    "timestamp": "2026-06-06T05:19:52Z",
+    "method": "comments",
+    "target_url": "https://www.instagram.com/p/DXYQ7_Jj0eZ/",
+    "token_index": 2,
+    "status_code": 201,
+    "result_count": 15,
+    "api_status": "success",
+    "estimated_cost": 0.032
+  },
+  {
+    "timestamp": "2026-06-06T05:20:09Z",
+    "method": "comments",
+    "target_url": "https://www.instagram.com/p/DXYYkRdj9Gs/",
+    "token_index": 3,
+    "status_code": 201,
+    "result_count": 15,
+    "api_status": "success",
+    "estimated_cost": 0.032
+  },
+  {
+    "timestamp": "2026-06-06T05:20:18Z",
+    "method": "comments",
+    "target_url": "https://www.instagram.com/p/DYGv32pvSVQ/",
+    "token_index": 4,
+    "status_code": 201,
+    "result_count": 15,
+    "api_status": "success",
+    "estimated_cost": 0.032
+  },
+  {
+    "timestamp": "2026-06-06T05:20:29Z",
+    "method": "comments",
+    "target_url": "https://www.instagram.com/p/DZAIQg5v3Do/",
+    "token_index": 5,
+    "status_code": 201,
+    "result_count": 15,
+    "api_status": "success",
+    "estimated_cost": 0.032
+  },
+  {
+    "timestamp": "2026-06-06T05:20:36Z",
+    "method": "comments",
+    "target_url": "https://www.instagram.com/p/DYwe9EABf3E/",
+    "token_index": 1,
+    "status_code": 201,
+    "result_count": 15,
+    "api_status": "success",
+    "estimated_cost": 0.032
+  },
+  {
+    "timestamp": "2026-06-06T05:20:48Z",
+    "method": "comments",
+    "target_url": "https://www.instagram.com/p/DZMyWMKSC_9/",
+    "token_index": 2,
+    "status_code": 201,
+    "result_count": 15,
+    "api_status": "success",
+    "estimated_cost": 0.032
+  },
+  {
+    "timestamp": "2026-06-06T05:20:56Z",
+    "method": "comments",
+    "target_url": "https://www.instagram.com/p/DY634efRagc/",
+    "token_index": 3,
+    "status_code": 201,
+    "result_count": 15,
+    "api_status": "success",
+    "estimated_cost": 0.032
+  },
+  {
+    "timestamp": "2026-06-06T05:21:08Z",
+    "method": "comments",
+    "target_url": "https://www.instagram.com/p/DY4GTqbSSfl/",
+    "token_index": 4,
+    "status_code": 201,
+    "result_count": 15,
+    "api_status": "success",
+    "estimated_cost": 0.032
+  },
+  {
+    "timestamp": "2026-06-06T05:21:25Z",
+    "method": "comments",
+    "target_url": "https://www.instagram.com/p/DY0mdXdy06s/",
+    "token_index": 5,
+    "status_code": 201,
+    "result_count": 7,
+    "api_status": "success",
+    "estimated_cost": 0.032
+  },
+  {
+    "timestamp": "2026-06-06T05:21:38Z",
+    "method": "comments",
+    "target_url": "https://www.instagram.com/p/DZFDAmzRGmB/",
+    "token_index": 1,
+    "status_code": 201,
+    "result_count": 15,
+    "api_status": "success",
+    "estimated_cost": 0.032
+  },
+  {
+    "timestamp": "2026-06-06T05:21:49Z",
+    "method": "comments",
+    "target_url": "https://www.instagram.com/p/DY9R1PhSgkP/",
+    "token_index": 2,
+    "status_code": 201,
+    "result_count": 15,
+    "api_status": "success",
+    "estimated_cost": 0.032
+  },
+  {
+    "timestamp": "2026-06-06T05:22:01Z",
+    "method": "comments",
+    "target_url": "https://www.instagram.com/p/DYy93ZySW57/",
+    "token_index": 3,
+    "status_code": 201,
+    "result_count": 15,
+    "api_status": "success",
+    "estimated_cost": 0.032
+  },
+  {
+    "timestamp": "2026-06-06T05:22:11Z",
+    "method": "comments",
+    "target_url": "https://www.instagram.com/p/DZHiWNaSbxq/",
+    "token_index": 4,
+    "status_code": 201,
+    "result_count": 15,
+    "api_status": "success",
+    "estimated_cost": 0.032
+  },
+  {
+    "timestamp": "2026-06-06T05:22:21Z",
+    "method": "comments",
+    "target_url": "https://www.instagram.com/p/DZKKnrxSG-c/",
+    "token_index": 5,
+    "status_code": 201,
+    "result_count": 15,
+    "api_status": "success",
+    "estimated_cost": 0.032
+  },
+  {
+    "timestamp": "2026-06-06T05:22:29Z",
+    "method": "comments",
+    "target_url": "https://www.instagram.com/p/DY_Nu4Fyr4c/",
+    "token_index": 1,
+    "status_code": 201,
+    "result_count": 15,
+    "api_status": "success",
+    "estimated_cost": 0.032
+  },
+  {
+    "timestamp": "2026-06-06T05:22:37Z",
+    "method": "comments",
+    "target_url": "https://www.instagram.com/p/DYjf52NSKAt/",
+    "token_index": 2,
+    "status_code": 201,
+    "result_count": 15,
+    "api_status": "success",
+    "estimated_cost": 0.032
+  },
+  {
+    "timestamp": "2026-06-06T05:22:45Z",
+    "method": "comments",
+    "target_url": "https://www.instagram.com/p/DZCZgmPS0QL/",
+    "token_index": 3,
+    "status_code": 201,
+    "result_count": 15,
+    "api_status": "success",
+    "estimated_cost": 0.032
+  },
+  {
+    "timestamp": "2026-06-06T05:23:00Z",
+    "method": "comments",
+    "target_url": "https://www.instagram.com/p/DYWsbUPxnyV/",
+    "token_index": 4,
+    "status_code": 201,
+    "result_count": 15,
+    "api_status": "success",
+    "estimated_cost": 0.032
+  },
+  {
+    "timestamp": "2026-06-06T05:23:14Z",
+    "method": "comments",
+    "target_url": "https://www.instagram.com/p/DYwX63MSuqi/",
+    "token_index": 5,
+    "status_code": 201,
+    "result_count": 15,
+    "api_status": "success",
+    "estimated_cost": 0.032
+  },
+  {
+    "timestamp": "2026-06-06T05:23:23Z",
+    "method": "comments",
+    "target_url": "https://www.instagram.com/p/DYe8l9KETu-/",
+    "token_index": 1,
+    "status_code": 201,
+    "result_count": 15,
+    "api_status": "success",
+    "estimated_cost": 0.032
+  },
+  {
+    "timestamp": "2026-06-06T05:23:33Z",
+    "method": "comments",
+    "target_url": "https://www.instagram.com/p/DYg885nxKuC/",
+    "token_index": 2,
+    "status_code": 201,
+    "result_count": 15,
+    "api_status": "success",
+    "estimated_cost": 0.032
+  },
+  {
+    "timestamp": "2026-06-06T05:23:45Z",
+    "method": "comments",
+    "target_url": "https://www.instagram.com/p/DYosx2ZR-hN/",
+    "token_index": 3,
+    "status_code": 201,
+    "result_count": 15,
+    "api_status": "success",
+    "estimated_cost": 0.032
+  },
+  {
+    "timestamp": "2026-06-06T05:23:53Z",
+    "method": "comments",
+    "target_url": "https://www.instagram.com/p/DYtywYRxN0G/",
+    "token_index": 4,
+    "status_code": 201,
+    "result_count": 11,
+    "api_status": "success",
+    "estimated_cost": 0.032
+  },
+  {
+    "timestamp": "2026-06-06T05:24:00Z",
+    "method": "comments",
+    "target_url": "https://www.instagram.com/p/DYrRt2ZSeov/",
+    "token_index": 5,
+    "status_code": 201,
+    "result_count": 15,
+    "api_status": "success",
+    "estimated_cost": 0.032
+  },
+  {
+    "timestamp": "2026-06-06T05:24:07Z",
+    "method": "comments",
+    "target_url": "https://www.instagram.com/p/DYb0bRTxbo3/",
+    "token_index": 1,
+    "status_code": 201,
+    "result_count": 15,
+    "api_status": "success",
+    "estimated_cost": 0.032
+  },
+  {
+    "timestamp": "2026-06-06T05:24:56Z",
+    "method": "comments",
+    "target_url": "https://www.instagram.com/p/DX9CacPR0U_/",
+    "token_index": 2,
+    "status_code": 201,
+    "result_count": 15,
+    "api_status": "success",
+    "estimated_cost": 0.032
+  },
+  {
+    "timestamp": "2026-06-06T05:25:04Z",
+    "method": "comments",
+    "target_url": "https://www.instagram.com/p/DXq_BlVS7BG/",
+    "token_index": 3,
+    "status_code": 201,
+    "result_count": 14,
+    "api_status": "success",
+    "estimated_cost": 0.032
+  },
+  {
+    "timestamp": "2026-06-06T05:25:12Z",
+    "method": "comments",
+    "target_url": "https://www.instagram.com/p/DYHOejCtcaM/",
+    "token_index": 4,
+    "status_code": 201,
+    "result_count": 15,
+    "api_status": "success",
+    "estimated_cost": 0.032
+  },
+  {
+    "timestamp": "2026-06-06T05:25:20Z",
+    "method": "comments",
+    "target_url": "https://www.instagram.com/p/DYJ1VBoxdO-/",
+    "token_index": 5,
+    "status_code": 201,
+    "result_count": 10,
+    "api_status": "success",
+    "estimated_cost": 0.032
+  },
+  {
+    "timestamp": "2026-06-06T05:25:38Z",
+    "method": "comments",
+    "target_url": "https://www.instagram.com/p/DYRlKlBSImY/",
+    "token_index": 1,
+    "status_code": 201,
+    "result_count": 15,
+    "api_status": "success",
+    "estimated_cost": 0.032
+  },
+  {
+    "timestamp": "2026-06-06T05:25:46Z",
+    "method": "comments",
+    "target_url": "https://www.instagram.com/p/DYUGllFSVTn/",
+    "token_index": 2,
+    "status_code": 201,
+    "result_count": 15,
+    "api_status": "success",
+    "estimated_cost": 0.032
+  },
+  {
+    "timestamp": "2026-06-06T05:25:55Z",
+    "method": "comments",
+    "target_url": "https://www.instagram.com/p/DYZTJG5xo-U/",
+    "token_index": 3,
+    "status_code": 201,
+    "result_count": 15,
+    "api_status": "success",
+    "estimated_cost": 0.032
+  },
+  {
+    "timestamp": "2026-06-06T05:26:06Z",
+    "method": "comments",
+    "target_url": "https://www.instagram.com/p/DYCG_Ghx3UE/",
+    "token_index": 4,
+    "status_code": 201,
+    "result_count": 15,
+    "api_status": "success",
+    "estimated_cost": 0.032
+  },
+  {
+    "timestamp": "2026-06-06T05:26:14Z",
+    "method": "comments",
+    "target_url": "https://www.instagram.com/p/DYEp3qXS45L/",
+    "token_index": 5,
+    "status_code": 201,
+    "result_count": 15,
+    "api_status": "success",
+    "estimated_cost": 0.032
+  },
+  {
+    "timestamp": "2026-06-06T05:26:21Z",
+    "method": "comments",
+    "target_url": "https://www.instagram.com/p/DXgsA8mkTGJ/",
+    "token_index": 1,
+    "status_code": 201,
+    "result_count": 13,
+    "api_status": "success",
+    "estimated_cost": 0.032
+  },
+  {
+    "timestamp": "2026-06-06T05:26:31Z",
+    "method": "comments",
+    "target_url": "https://www.instagram.com/p/DYenerBSAFS/",
+    "token_index": 2,
+    "status_code": 201,
+    "result_count": 15,
+    "api_status": "success",
+    "estimated_cost": 0.032
+  },
+  {
+    "timestamp": "2026-06-06T05:26:42Z",
+    "method": "comments",
+    "target_url": "https://www.instagram.com/p/DYHVYSuRB4u/",
+    "token_index": 3,
+    "status_code": 201,
+    "result_count": 15,
+    "api_status": "success",
+    "estimated_cost": 0.032
+  },
+  {
+    "timestamp": "2026-06-06T05:26:54Z",
+    "method": "comments",
+    "target_url": "https://www.instagram.com/p/DYL5CeBPPmv/",
+    "token_index": 4,
+    "status_code": 201,
+    "result_count": 15,
+    "api_status": "success",
+    "estimated_cost": 0.032
+  },
+  {
+    "timestamp": "2026-06-06T05:27:02Z",
+    "method": "comments",
+    "target_url": "https://www.instagram.com/p/DYmEvQcSSC3/",
+    "token_index": 5,
+    "status_code": 201,
+    "result_count": 15,
+    "api_status": "success",
+    "estimated_cost": 0.032
+  },
+  {
+    "timestamp": "2026-06-06T05:27:09Z",
+    "method": "comments",
+    "target_url": "https://www.instagram.com/p/DXuHl1ikjl3/",
+    "token_index": 1,
+    "status_code": 201,
+    "result_count": 15,
+    "api_status": "success",
+    "estimated_cost": 0.032
+  },
+  {
+    "timestamp": "2026-06-06T05:27:19Z",
+    "method": "comments",
+    "target_url": "https://www.instagram.com/p/DX31S0Xyh6t/",
+    "token_index": 2,
+    "status_code": 201,
+    "result_count": 15,
+    "api_status": "success",
+    "estimated_cost": 0.032
+  },
+  {
+    "timestamp": "2026-06-06T05:27:33Z",
+    "method": "comments",
+    "target_url": "https://www.instagram.com/p/DXoRm8xSKZZ/",
+    "token_index": 3,
+    "status_code": 201,
+    "result_count": 15,
+    "api_status": "success",
+    "estimated_cost": 0.032
+  },
+  {
+    "timestamp": "2026-06-06T05:27:42Z",
+    "method": "comments",
+    "target_url": "https://www.instagram.com/p/DXvTZxrSPvH/",
+    "token_index": 4,
+    "status_code": 201,
+    "result_count": 15,
+    "api_status": "success",
+    "estimated_cost": 0.032
+  },
+  {
+    "timestamp": "2026-06-06T05:27:52Z",
+    "method": "comments",
+    "target_url": "https://www.instagram.com/p/DYMgqOIRY4s/",
+    "token_index": 5,
+    "status_code": 201,
+    "result_count": 15,
+    "api_status": "success",
+    "estimated_cost": 0.032
+  },
+  {
+    "timestamp": "2026-06-06T05:28:00Z",
+    "method": "comments",
+    "target_url": "https://www.instagram.com/p/DX6Z9LbROuE/",
+    "token_index": 1,
+    "status_code": 201,
+    "result_count": 15,
+    "api_status": "success",
+    "estimated_cost": 0.032
+  },
+  {
+    "timestamp": "2026-06-06T05:28:17Z",
+    "method": "comments",
+    "target_url": "https://www.instagram.com/p/DXtgXz2Ef_E/",
+    "token_index": 2,
+    "status_code": 201,
+    "result_count": 14,
+    "api_status": "success",
+    "estimated_cost": 0.032
+  },
+  {
+    "timestamp": "2026-06-06T05:28:27Z",
+    "method": "comments",
+    "target_url": "https://www.instagram.com/p/DYPAaBwy3OF/",
+    "token_index": 3,
+    "status_code": 201,
+    "result_count": 15,
+    "api_status": "success",
+    "estimated_cost": 0.032
+  },
+  {
+    "timestamp": "2026-06-06T05:28:35Z",
+    "method": "comments",
+    "target_url": "https://www.instagram.com/p/DX_isSpROu3/",
+    "token_index": 4,
+    "status_code": 201,
+    "result_count": 7,
+    "api_status": "success",
+    "estimated_cost": 0.032
+  },
+  {
+    "timestamp": "2026-06-06T05:28:45Z",
+    "method": "comments",
+    "target_url": "https://www.instagram.com/p/DXdqYXQgR21/",
+    "token_index": 5,
+    "status_code": 201,
+    "result_count": 15,
+    "api_status": "success",
+    "estimated_cost": 0.032
+  },
+  {
+    "timestamp": "2026-06-06T05:28:57Z",
+    "method": "comments",
+    "target_url": "https://www.instagram.com/p/DXyyHAhxpDc/",
+    "token_index": 1,
+    "status_code": 201,
+    "result_count": 15,
+    "api_status": "success",
+    "estimated_cost": 0.032
+  },
+  {
+    "timestamp": "2026-06-06T05:29:03Z",
+    "method": "comments",
+    "target_url": "https://www.instagram.com/p/DXd-a4fS8r3/",
+    "token_index": 2,
+    "status_code": 201,
+    "result_count": 15,
+    "api_status": "success",
+    "estimated_cost": 0.032
+  },
+  {
+    "timestamp": "2026-06-06T05:29:13Z",
+    "method": "comments",
+    "target_url": "https://www.instagram.com/p/DZKsADNpIqY/",
+    "token_index": 3,
+    "status_code": 201,
+    "result_count": 1,
+    "api_status": "success",
+    "estimated_cost": 0.032
+  },
+  {
+    "timestamp": "2026-06-06T05:29:20Z",
+    "method": "comments",
+    "target_url": "https://www.instagram.com/p/DZMHoYyj5GU/",
+    "token_index": 4,
+    "status_code": 201,
+    "result_count": 3,
+    "api_status": "success",
+    "estimated_cost": 0.032
+  },
+  {
+    "timestamp": "2026-06-06T05:29:29Z",
+    "method": "comments",
+    "target_url": "https://www.instagram.com/p/DZFkJ-4tack/",
+    "token_index": 5,
+    "status_code": 201,
+    "result_count": 3,
+    "api_status": "success",
+    "estimated_cost": 0.032
+  },
+  {
+    "timestamp": "2026-06-06T05:29:37Z",
+    "method": "comments",
+    "target_url": "https://www.instagram.com/p/DZNMCD_pu7_/",
+    "token_index": 1,
+    "status_code": 201,
+    "result_count": 5,
+    "api_status": "success",
+    "estimated_cost": 0.032
+  },
+  {
+    "timestamp": "2026-06-06T05:29:48Z",
+    "method": "comments",
+    "target_url": "https://www.instagram.com/p/DZHs9Igv9H6/",
+    "token_index": 2,
+    "status_code": 201,
+    "result_count": 12,
+    "api_status": "success",
+    "estimated_cost": 0.032
+  },
+  {
+    "timestamp": "2026-06-06T05:29:56Z",
+    "method": "comments",
+    "target_url": "https://www.instagram.com/p/DZMwPqIPBBO/",
+    "token_index": 3,
+    "status_code": 201,
+    "result_count": 12,
+    "api_status": "success",
+    "estimated_cost": 0.032
+  },
+  {
+    "timestamp": "2026-06-06T05:30:03Z",
+    "method": "comments",
+    "target_url": "https://www.instagram.com/p/DXWBVn-D-cD/",
+    "token_index": 4,
+    "status_code": 201,
+    "result_count": 15,
+    "api_status": "success",
+    "estimated_cost": 0.032
+  },
+  {
+    "timestamp": "2026-06-06T05:30:10Z",
+    "method": "comments",
+    "target_url": "https://www.instagram.com/p/DZJqelrvrma/",
+    "token_index": 5,
+    "status_code": 201,
+    "result_count": 11,
+    "api_status": "success",
+    "estimated_cost": 0.032
+  },
+  {
+    "timestamp": "2026-06-06T05:30:18Z",
+    "method": "comments",
+    "target_url": "https://www.instagram.com/p/DY8kiGDv4QB/",
+    "token_index": 1,
+    "status_code": 201,
+    "result_count": 3,
+    "api_status": "success",
+    "estimated_cost": 0.032
+  },
+  {
+    "timestamp": "2026-06-06T05:30:29Z",
+    "method": "comments",
+    "target_url": "https://www.instagram.com/p/DY8hSkxPZxV/",
+    "token_index": 2,
+    "status_code": 201,
+    "result_count": 8,
+    "api_status": "success",
+    "estimated_cost": 0.032
+  },
+  {
+    "timestamp": "2026-06-06T05:30:37Z",
+    "method": "comments",
+    "target_url": "https://www.instagram.com/p/DY-0l-Pj6s_/",
+    "token_index": 3,
+    "status_code": 201,
+    "result_count": 2,
+    "api_status": "success",
+    "estimated_cost": 0.032
+  },
+  {
+    "timestamp": "2026-06-06T05:30:46Z",
+    "method": "comments",
+    "target_url": "https://www.instagram.com/p/DY_gTg-zfji/",
+    "token_index": 4,
+    "status_code": 201,
+    "result_count": 3,
+    "api_status": "success",
+    "estimated_cost": 0.032
+  },
+  {
+    "timestamp": "2026-06-06T05:30:54Z",
+    "method": "comments",
+    "target_url": "https://www.instagram.com/p/DY0hczAD9t1/",
+    "token_index": 5,
+    "status_code": 201,
+    "result_count": 1,
+    "api_status": "success",
+    "estimated_cost": 0.032
+  },
+  {
+    "timestamp": "2026-06-06T05:31:02Z",
+    "method": "comments",
+    "target_url": "https://www.instagram.com/p/DY_3KohP_TX/",
+    "token_index": 1,
+    "status_code": 201,
+    "result_count": 4,
+    "api_status": "success",
+    "estimated_cost": 0.032
+  },
+  {
+    "timestamp": "2026-06-06T05:31:10Z",
+    "method": "comments",
+    "target_url": "https://www.instagram.com/p/DZBdqF4D310/",
+    "token_index": 2,
+    "status_code": 201,
+    "result_count": 1,
+    "api_status": "success",
+    "estimated_cost": 0.032
+  },
+  {
+    "timestamp": "2026-06-06T05:31:18Z",
+    "method": "comments",
+    "target_url": "https://www.instagram.com/p/DY_X3A0Ijvc/",
+    "token_index": 3,
+    "status_code": 201,
+    "result_count": 4,
+    "api_status": "success",
+    "estimated_cost": 0.032
+  },
+  {
+    "timestamp": "2026-06-06T05:31:26Z",
+    "method": "comments",
+    "target_url": "https://www.instagram.com/p/DZM4_xYoukI/",
+    "token_index": 4,
+    "status_code": 201,
+    "result_count": 2,
+    "api_status": "success",
+    "estimated_cost": 0.032
+  },
+  {
+    "timestamp": "2026-06-06T05:31:34Z",
+    "method": "comments",
+    "target_url": "https://www.instagram.com/p/DYyoP3cj__5/",
+    "token_index": 5,
+    "status_code": 201,
+    "result_count": 15,
+    "api_status": "success",
+    "estimated_cost": 0.032
+  },
+  {
+    "timestamp": "2026-06-06T05:31:42Z",
+    "method": "comments",
+    "target_url": "https://www.instagram.com/p/DYy1mD4Pwcd/",
+    "token_index": 1,
+    "status_code": 201,
+    "result_count": 15,
+    "api_status": "success",
+    "estimated_cost": 0.032
+  },
+  {
+    "timestamp": "2026-06-06T05:31:52Z",
+    "method": "comments",
+    "target_url": "https://www.instagram.com/p/DYynlpVvgqm/",
+    "token_index": 2,
+    "status_code": 201,
+    "result_count": 15,
+    "api_status": "success",
+    "estimated_cost": 0.032
+  },
+  {
+    "timestamp": "2026-06-06T05:31:59Z",
+    "method": "comments",
+    "target_url": "https://www.instagram.com/p/DYwiENkvBDx/",
+    "token_index": 3,
+    "status_code": 201,
+    "result_count": 2,
+    "api_status": "success",
+    "estimated_cost": 0.032
+  },
+  {
+    "timestamp": "2026-06-06T05:32:09Z",
+    "method": "comments",
+    "target_url": "https://www.instagram.com/p/DY6BjWvj4Z1/",
+    "token_index": 4,
+    "status_code": 201,
+    "result_count": 15,
+    "api_status": "success",
+    "estimated_cost": 0.032
+  },
+  {
+    "timestamp": "2026-06-06T05:32:20Z",
+    "method": "comments",
+    "target_url": "https://www.instagram.com/p/DYrlstZFHxk/",
+    "token_index": 5,
+    "status_code": 201,
+    "result_count": 15,
+    "api_status": "success",
+    "estimated_cost": 0.032
+  },
+  {
+    "timestamp": "2026-06-06T05:32:27Z",
+    "method": "comments",
+    "target_url": "https://www.instagram.com/p/DY-7c1sDxsE/",
+    "token_index": 1,
+    "status_code": 201,
+    "result_count": 15,
+    "api_status": "success",
+    "estimated_cost": 0.032
+  },
+  {
+    "timestamp": "2026-06-06T05:32:35Z",
+    "method": "comments",
+    "target_url": "https://www.instagram.com/p/DYy8QzqSdbg/",
+    "token_index": 2,
+    "status_code": 201,
+    "result_count": 7,
+    "api_status": "success",
+    "estimated_cost": 0.032
+  },
+  {
+    "timestamp": "2026-06-06T05:32:43Z",
+    "method": "comments",
+    "target_url": "https://www.instagram.com/p/DZHn_2yvS53/",
+    "token_index": 3,
+    "status_code": 201,
+    "result_count": 15,
+    "api_status": "success",
+    "estimated_cost": 0.032
+  },
+  {
+    "timestamp": "2026-06-06T05:33:00Z",
+    "method": "comments",
+    "target_url": "https://www.instagram.com/p/DYv-E4klck_/",
+    "token_index": 4,
+    "status_code": 201,
+    "result_count": 1,
+    "api_status": "success",
+    "estimated_cost": 0.032
+  },
+  {
+    "timestamp": "2026-06-06T05:33:08Z",
+    "method": "comments",
+    "target_url": "https://www.instagram.com/p/DYzjdKFvFGw/",
+    "token_index": 5,
+    "status_code": 201,
+    "result_count": 10,
+    "api_status": "success",
+    "estimated_cost": 0.032
+  },
+  {
+    "timestamp": "2026-06-06T05:33:16Z",
+    "method": "comments",
+    "target_url": "https://www.instagram.com/p/DY0VZyvTvCU/",
+    "token_index": 1,
+    "status_code": 201,
+    "result_count": 7,
+    "api_status": "success",
+    "estimated_cost": 0.032
+  },
+  {
+    "timestamp": "2026-06-06T05:33:24Z",
+    "method": "comments",
+    "target_url": "https://www.instagram.com/p/DZFdNn0vQyv/",
+    "token_index": 2,
+    "status_code": 201,
+    "result_count": 2,
+    "api_status": "success",
+    "estimated_cost": 0.032
+  },
+  {
+    "timestamp": "2026-06-06T05:33:32Z",
+    "method": "comments",
+    "target_url": "https://www.instagram.com/p/DYn3f9rj6MD/",
+    "token_index": 3,
+    "status_code": 201,
+    "result_count": 4,
+    "api_status": "success",
+    "estimated_cost": 0.032
+  },
+  {
+    "timestamp": "2026-06-06T05:33:39Z",
+    "method": "comments",
+    "target_url": "https://www.instagram.com/p/DYjWdheEcSl/",
+    "token_index": 4,
+    "status_code": 201,
+    "result_count": 14,
+    "api_status": "success",
+    "estimated_cost": 0.032
+  },
+  {
+    "timestamp": "2026-06-06T05:33:48Z",
+    "method": "comments",
+    "target_url": "https://www.instagram.com/p/DYhTk8qlCE5/",
+    "token_index": 5,
+    "status_code": 201,
+    "result_count": 15,
+    "api_status": "success",
+    "estimated_cost": 0.032
+  },
+  {
+    "timestamp": "2026-06-06T05:33:55Z",
+    "method": "comments",
+    "target_url": "https://www.instagram.com/p/DYrY5AYtlHH/",
+    "token_index": 1,
+    "status_code": 201,
+    "result_count": 15,
+    "api_status": "success",
+    "estimated_cost": 0.032
+  },
+  {
+    "timestamp": "2026-06-06T05:34:03Z",
+    "method": "comments",
+    "target_url": "https://www.instagram.com/p/DYqb-hmhZYe/",
+    "token_index": 2,
+    "status_code": 201,
+    "result_count": 1,
+    "api_status": "success",
+    "estimated_cost": 0.032
+  },
+  {
+    "timestamp": "2026-06-06T05:34:12Z",
+    "method": "comments",
+    "target_url": "https://www.instagram.com/p/DYi9UiiBarw/",
+    "token_index": 3,
+    "status_code": 201,
+    "result_count": 5,
+    "api_status": "success",
+    "estimated_cost": 0.032
+  },
+  {
+    "timestamp": "2026-06-06T05:34:20Z",
+    "method": "comments",
+    "target_url": "https://www.instagram.com/p/DYmDdDyyRKC/",
+    "token_index": 4,
+    "status_code": 201,
+    "result_count": 15,
+    "api_status": "success",
+    "estimated_cost": 0.032
+  },
+  {
+    "timestamp": "2026-06-06T05:34:28Z",
+    "method": "comments",
+    "target_url": "https://www.instagram.com/p/DYodThev7pJ/",
+    "token_index": 5,
+    "status_code": 201,
+    "result_count": 15,
+    "api_status": "success",
+    "estimated_cost": 0.032
+  },
+  {
+    "timestamp": "2026-06-06T05:34:36Z",
+    "method": "comments",
+    "target_url": "https://www.instagram.com/p/DYi-gE0vAkk/",
+    "token_index": 1,
+    "status_code": 201,
+    "result_count": 15,
+    "api_status": "success",
+    "estimated_cost": 0.032
+  },
+  {
+    "timestamp": "2026-06-06T05:34:48Z",
+    "method": "comments",
+    "target_url": "https://www.instagram.com/p/DYjeXhZRRQg/",
+    "token_index": 2,
+    "status_code": 201,
+    "result_count": 2,
+    "api_status": "success",
+    "estimated_cost": 0.032
+  },
+  {
+    "timestamp": "2026-06-06T05:34:59Z",
+    "method": "comments",
+    "target_url": "https://www.instagram.com/p/DYhLxfDPi21/",
+    "token_index": 3,
+    "status_code": 201,
+    "result_count": 15,
+    "api_status": "success",
+    "estimated_cost": 0.032
+  },
+  {
+    "timestamp": "2026-06-06T05:35:07Z",
+    "method": "comments",
+    "target_url": "https://www.instagram.com/p/DYzFgboTSHS/",
+    "token_index": 4,
+    "status_code": 201,
+    "result_count": 2,
+    "api_status": "success",
+    "estimated_cost": 0.032
+  },
+  {
+    "timestamp": "2026-06-06T05:35:15Z",
+    "method": "comments",
+    "target_url": "https://www.instagram.com/p/DY8gDshssLm/",
+    "token_index": 5,
+    "status_code": 201,
+    "result_count": 15,
+    "api_status": "success",
+    "estimated_cost": 0.032
+  },
+  {
+    "timestamp": "2026-06-06T05:35:22Z",
+    "method": "comments",
+    "target_url": "https://www.instagram.com/p/DZHumkYMgX4/",
+    "token_index": 1,
+    "status_code": 201,
+    "result_count": 15,
+    "api_status": "success",
+    "estimated_cost": 0.032
+  },
+  {
+    "timestamp": "2026-06-06T05:35:28Z",
+    "method": "comments",
+    "target_url": "https://www.instagram.com/p/DY6LCX-M9Fx/",
+    "token_index": 2,
+    "status_code": 201,
+    "result_count": 15,
+    "api_status": "success",
+    "estimated_cost": 0.032
+  },
+  {
+    "timestamp": "2026-06-06T05:35:36Z",
+    "method": "comments",
+    "target_url": "https://www.instagram.com/p/DY7GWAjsmmG/",
+    "token_index": 3,
+    "status_code": 201,
+    "result_count": 15,
+    "api_status": "success",
+    "estimated_cost": 0.032
+  },
+  {
+    "timestamp": "2026-06-06T05:35:43Z",
+    "method": "comments",
+    "target_url": "https://www.instagram.com/p/DZAD2K-sc4-/",
+    "token_index": 4,
+    "status_code": 201,
+    "result_count": 15,
+    "api_status": "success",
+    "estimated_cost": 0.032
+  },
+  {
+    "timestamp": "2026-06-06T05:35:50Z",
+    "method": "comments",
+    "target_url": "https://www.instagram.com/p/DY6x3DvMnXV/",
+    "token_index": 5,
+    "status_code": 201,
+    "result_count": 15,
+    "api_status": "success",
+    "estimated_cost": 0.032
+  },
+  {
+    "timestamp": "2026-06-06T05:35:57Z",
+    "method": "comments",
+    "target_url": "https://www.instagram.com/p/DZNMs_EMQ-M/",
+    "token_index": 1,
+    "status_code": 201,
+    "result_count": 4,
+    "api_status": "success",
+    "estimated_cost": 0.032
+  },
+  {
+    "timestamp": "2026-06-06T05:36:06Z",
+    "method": "comments",
+    "target_url": "https://www.instagram.com/p/DZAIhnXsMN1/",
+    "token_index": 2,
+    "status_code": 201,
+    "result_count": 15,
+    "api_status": "success",
+    "estimated_cost": 0.032
+  },
+  {
+    "timestamp": "2026-06-06T05:36:14Z",
+    "method": "comments",
+    "target_url": "https://www.instagram.com/p/DZFglCqmd3r/",
+    "token_index": 3,
+    "status_code": 201,
+    "result_count": 15,
+    "api_status": "success",
+    "estimated_cost": 0.032
+  },
+  {
+    "timestamp": "2026-06-06T05:36:23Z",
+    "method": "comments",
+    "target_url": "https://www.instagram.com/p/DY08_8Rs_kU/",
+    "token_index": 4,
+    "status_code": 201,
+    "result_count": 15,
+    "api_status": "success",
+    "estimated_cost": 0.032
+  },
+  {
+    "timestamp": "2026-06-06T05:36:30Z",
+    "method": "comments",
+    "target_url": "https://www.instagram.com/p/DYzPy_JMfjl/",
+    "token_index": 5,
+    "status_code": 201,
+    "result_count": 15,
+    "api_status": "success",
+    "estimated_cost": 0.032
+  },
+  {
+    "timestamp": "2026-06-06T05:36:38Z",
+    "method": "comments",
+    "target_url": "https://www.instagram.com/p/DYrlxjPM1cz/",
+    "token_index": 1,
+    "status_code": 201,
+    "result_count": 6,
+    "api_status": "success",
+    "estimated_cost": 0.032
+  },
+  {
+    "timestamp": "2026-06-06T05:36:53Z",
+    "method": "comments",
+    "target_url": "https://www.instagram.com/p/DYrscICMdcP/",
+    "token_index": 2,
+    "status_code": 201,
+    "result_count": 15,
+    "api_status": "success",
+    "estimated_cost": 0.032
+  },
+  {
+    "timestamp": "2026-06-06T05:37:01Z",
+    "method": "comments",
+    "target_url": "https://www.instagram.com/p/DY4N7brMlkW/",
+    "token_index": 3,
+    "status_code": 201,
+    "result_count": 15,
+    "api_status": "success",
+    "estimated_cost": 0.032
+  },
+  {
+    "timestamp": "2026-06-06T05:37:08Z",
+    "method": "comments",
+    "target_url": "https://www.instagram.com/p/DYwfMkrsQD_/",
+    "token_index": 4,
+    "status_code": 201,
+    "result_count": 15,
+    "api_status": "success",
+    "estimated_cost": 0.032
+  },
+  {
+    "timestamp": "2026-06-06T05:37:25Z",
+    "method": "comments",
+    "target_url": "https://www.instagram.com/p/DYmOPFzM8-V/",
+    "token_index": 5,
+    "status_code": 201,
+    "result_count": 15,
+    "api_status": "success",
+    "estimated_cost": 0.032
+  },
+  {
+    "timestamp": "2026-06-06T05:37:32Z",
+    "method": "comments",
+    "target_url": "https://www.instagram.com/p/DYzCVFaslCd/",
+    "token_index": 1,
+    "status_code": 201,
+    "result_count": 15,
+    "api_status": "success",
+    "estimated_cost": 0.032
+  },
+  {
+    "timestamp": "2026-06-06T05:37:40Z",
+    "method": "comments",
+    "target_url": "https://www.instagram.com/p/DYv4YvHM-F2/",
+    "token_index": 2,
+    "status_code": 201,
+    "result_count": 15,
+    "api_status": "success",
+    "estimated_cost": 0.032
+  },
+  {
+    "timestamp": "2026-06-06T05:37:48Z",
+    "method": "comments",
+    "target_url": "https://www.instagram.com/p/DY0kvxgREwL/",
+    "token_index": 3,
+    "status_code": 201,
+    "result_count": 15,
+    "api_status": "success",
+    "estimated_cost": 0.032
+  },
+  {
+    "timestamp": "2026-06-06T05:38:01Z",
+    "method": "comments",
+    "target_url": "https://www.instagram.com/p/DYl4yGamUaO/",
+    "token_index": 4,
+    "status_code": 201,
+    "result_count": 15,
+    "api_status": "success",
+    "estimated_cost": 0.032
+  },
+  {
+    "timestamp": "2026-06-06T05:38:12Z",
+    "method": "comments",
+    "target_url": "https://www.instagram.com/p/DYhbT7Ls2Nj/",
+    "token_index": 5,
+    "status_code": 201,
+    "result_count": 15,
+    "api_status": "success",
+    "estimated_cost": 0.032
+  },
+  {
+    "timestamp": "2026-06-06T05:39:09Z",
+    "method": "comments",
+    "target_url": "https://www.instagram.com/p/DYgC3YxMch2/",
+    "token_index": 1,
+    "status_code": 201,
+    "result_count": 15,
+    "api_status": "success",
+    "estimated_cost": 0.032
+  },
+  {
+    "timestamp": "2026-06-06T05:39:22Z",
+    "method": "comments",
+    "target_url": "https://www.instagram.com/p/DZH-0cmsrP5/",
+    "token_index": 2,
+    "status_code": 201,
+    "result_count": 15,
+    "api_status": "success",
+    "estimated_cost": 0.032
+  },
+  {
+    "timestamp": "2026-06-06T05:39:29Z",
+    "method": "comments",
+    "target_url": "https://www.instagram.com/p/DYuFYNMsFlY/",
+    "token_index": 3,
+    "status_code": 201,
+    "result_count": 15,
+    "api_status": "success",
+    "estimated_cost": 0.032
+  },
+  {
+    "timestamp": "2026-06-06T05:39:42Z",
+    "method": "comments",
+    "target_url": "https://www.instagram.com/p/DYecQW6MOlD/",
+    "token_index": 4,
+    "status_code": 201,
+    "result_count": 15,
+    "api_status": "success",
+    "estimated_cost": 0.032
+  },
+  {
+    "timestamp": "2026-06-06T05:40:17Z",
+    "method": "comments",
+    "target_url": "https://www.instagram.com/p/DYet3kfsKcy/",
+    "token_index": 5,
+    "status_code": 201,
+    "result_count": 15,
+    "api_status": "success",
+    "estimated_cost": 0.032
+  },
+  {
+    "timestamp": "2026-06-06T05:40:25Z",
+    "method": "comments",
+    "target_url": "https://www.instagram.com/p/DZNFVDcsLnU/",
+    "token_index": 1,
+    "status_code": 201,
+    "result_count": 15,
+    "api_status": "success",
+    "estimated_cost": 0.032
+  },
+  {
+    "timestamp": "2026-06-06T05:40:33Z",
+    "method": "comments",
+    "target_url": "https://www.instagram.com/p/DYlt_ZTsbU8/",
+    "token_index": 2,
+    "status_code": 201,
+    "result_count": 15,
+    "api_status": "success",
+    "estimated_cost": 0.032
+  },
+  {
+    "timestamp": "2026-06-06T05:40:50Z",
+    "method": "comments",
+    "target_url": "https://www.instagram.com/p/DYuQNvhsTfW/",
+    "token_index": 3,
+    "status_code": 201,
+    "result_count": 15,
+    "api_status": "success",
+    "estimated_cost": 0.032
+  },
+  {
+    "timestamp": "2026-06-06T05:40:58Z",
+    "method": "comments",
+    "target_url": "https://www.instagram.com/p/DZFhBAts8bp/",
+    "token_index": 4,
+    "status_code": 201,
+    "result_count": 15,
+    "api_status": "success",
+    "estimated_cost": 0.032
+  },
+  {
+    "timestamp": "2026-06-06T05:41:06Z",
+    "method": "comments",
+    "target_url": "https://www.instagram.com/p/DZNCUxMxUme/",
+    "token_index": 5,
+    "status_code": 201,
+    "result_count": 15,
+    "api_status": "success",
+    "estimated_cost": 0.032
+  },
+  {
+    "timestamp": "2026-06-06T05:41:14Z",
+    "method": "comments",
+    "target_url": "https://www.instagram.com/p/DZOoM0dR0Gj/",
+    "token_index": 1,
+    "status_code": 201,
+    "result_count": 15,
+    "api_status": "success",
+    "estimated_cost": 0.032
+  },
+  {
+    "timestamp": "2026-06-06T05:41:21Z",
+    "method": "comments",
+    "target_url": "https://www.instagram.com/p/DZNIoDmx0AA/",
+    "token_index": 2,
+    "status_code": 201,
+    "result_count": 15,
+    "api_status": "success",
+    "estimated_cost": 0.032
+  },
+  {
+    "timestamp": "2026-06-06T05:41:42Z",
+    "method": "comments",
+    "target_url": "https://www.instagram.com/p/DZM_BTPxaiu/",
+    "token_index": 3,
+    "status_code": 201,
+    "result_count": 10,
+    "api_status": "success",
+    "estimated_cost": 0.032
+  },
+  {
+    "timestamp": "2026-06-06T05:41:48Z",
+    "method": "comments",
+    "target_url": "https://www.instagram.com/p/DZOyb_5RlCO/",
+    "token_index": 4,
+    "status_code": 201,
+    "result_count": 12,
+    "api_status": "success",
+    "estimated_cost": 0.032
+  },
+  {
+    "timestamp": "2026-06-06T05:41:56Z",
+    "method": "comments",
+    "target_url": "https://www.instagram.com/p/DZOufbrxhNa/",
+    "token_index": 5,
+    "status_code": 201,
+    "result_count": 15,
+    "api_status": "success",
+    "estimated_cost": 0.032
+  },
+  {
+    "timestamp": "2026-06-06T05:42:04Z",
+    "method": "comments",
+    "target_url": "https://www.instagram.com/p/DZKlOlSRxBA/",
+    "token_index": 1,
+    "status_code": 201,
+    "result_count": 3,
+    "api_status": "success",
+    "estimated_cost": 0.032
+  },
+  {
+    "timestamp": "2026-06-06T05:42:11Z",
+    "method": "comments",
+    "target_url": "https://www.instagram.com/p/DZKSC3mRzVF/",
+    "token_index": 2,
+    "status_code": 201,
+    "result_count": 15,
+    "api_status": "success",
+    "estimated_cost": 0.032
+  },
+  {
+    "timestamp": "2026-06-06T05:42:19Z",
+    "method": "comments",
+    "target_url": "https://www.instagram.com/p/DZH_O4Yx1Vq/",
+    "token_index": 3,
+    "status_code": 201,
+    "result_count": 15,
+    "api_status": "success",
+    "estimated_cost": 0.032
+  },
+  {
+    "timestamp": "2026-06-06T05:42:26Z",
+    "method": "comments",
+    "target_url": "https://www.instagram.com/p/DZH61G0RrOB/",
+    "token_index": 4,
+    "status_code": 201,
+    "result_count": 15,
+    "api_status": "success",
+    "estimated_cost": 0.032
+  },
+  {
+    "timestamp": "2026-06-06T05:42:34Z",
+    "method": "comments",
+    "target_url": "https://www.instagram.com/p/DZH1bNkRY3O/",
+    "token_index": 5,
+    "status_code": 201,
+    "result_count": 6,
+    "api_status": "success",
+    "estimated_cost": 0.032
+  },
+  {
+    "timestamp": "2026-06-06T05:42:42Z",
+    "method": "comments",
+    "target_url": "https://www.instagram.com/p/DZM3M1ixW5R/",
+    "token_index": 1,
+    "status_code": 201,
+    "result_count": 15,
+    "api_status": "success",
+    "estimated_cost": 0.032
+  },
+  {
+    "timestamp": "2026-06-06T05:42:49Z",
+    "method": "comments",
+    "target_url": "https://www.instagram.com/p/DZKdKkCxbSG/",
+    "token_index": 2,
+    "status_code": 201,
+    "result_count": 15,
+    "api_status": "success",
+    "estimated_cost": 0.032
+  },
+  {
+    "timestamp": "2026-06-06T05:43:00Z",
+    "method": "comments",
+    "target_url": "https://www.instagram.com/p/DZJ2hPVGI9f/",
+    "token_index": 3,
+    "status_code": 201,
+    "result_count": 15,
+    "api_status": "success",
+    "estimated_cost": 0.032
+  },
+  {
+    "timestamp": "2026-06-06T05:43:09Z",
+    "method": "comments",
+    "target_url": "https://www.instagram.com/p/DZKiOPZR-_F/",
+    "token_index": 4,
+    "status_code": 201,
+    "result_count": 15,
+    "api_status": "success",
+    "estimated_cost": 0.032
+  },
+  {
+    "timestamp": "2026-06-06T05:43:21Z",
+    "method": "comments",
+    "target_url": "https://www.instagram.com/p/DZH349vxmMx/",
+    "token_index": 5,
+    "status_code": 201,
+    "result_count": 6,
+    "api_status": "success",
+    "estimated_cost": 0.032
+  },
+  {
+    "timestamp": "2026-06-06T05:43:28Z",
+    "method": "comments",
+    "target_url": "https://www.instagram.com/p/DZKVmRURTBC/",
+    "token_index": 1,
+    "status_code": 201,
+    "result_count": 6,
+    "api_status": "success",
+    "estimated_cost": 0.032
+  },
+  {
+    "timestamp": "2026-06-06T05:43:36Z",
+    "method": "comments",
+    "target_url": "https://www.instagram.com/p/DZHyTtexI-2/",
+    "token_index": 2,
+    "status_code": 201,
+    "result_count": 5,
+    "api_status": "success",
+    "estimated_cost": 0.032
+  },
+  {
+    "timestamp": "2026-06-06T05:43:45Z",
+    "method": "comments",
+    "target_url": "https://www.instagram.com/p/DZCAp_HxRZ1/",
+    "token_index": 3,
+    "status_code": 201,
+    "result_count": 15,
+    "api_status": "success",
+    "estimated_cost": 0.032
+  },
+  {
+    "timestamp": "2026-06-06T05:43:53Z",
+    "method": "comments",
+    "target_url": "https://www.instagram.com/p/DZFLvugRuAA/",
+    "token_index": 4,
+    "status_code": 201,
+    "result_count": 15,
+    "api_status": "success",
+    "estimated_cost": 0.032
+  },
+  {
+    "timestamp": "2026-06-06T05:43:59Z",
+    "method": "comments",
+    "target_url": "https://www.instagram.com/p/DZFPEsjxoyJ/",
+    "token_index": 5,
+    "status_code": 201,
+    "result_count": 15,
+    "api_status": "success",
+    "estimated_cost": 0.032
+  },
+  {
+    "timestamp": "2026-06-06T05:44:07Z",
+    "method": "comments",
+    "target_url": "https://www.instagram.com/p/DZHtWlaxmvS/",
+    "token_index": 1,
+    "status_code": 201,
+    "result_count": 15,
+    "api_status": "success",
+    "estimated_cost": 0.032
+  },
+  {
+    "timestamp": "2026-06-06T05:44:14Z",
+    "method": "comments",
+    "target_url": "https://www.instagram.com/p/DZFQ4RGRDKG/",
+    "token_index": 2,
+    "status_code": 201,
+    "result_count": 15,
+    "api_status": "success",
+    "estimated_cost": 0.032
+  },
+  {
+    "timestamp": "2026-06-06T05:44:22Z",
+    "method": "comments",
+    "target_url": "https://www.instagram.com/p/DZFII9GxXjN/",
+    "token_index": 3,
+    "status_code": 201,
+    "result_count": 15,
+    "api_status": "success",
+    "estimated_cost": 0.032
+  },
+  {
+    "timestamp": "2026-06-06T05:44:33Z",
+    "method": "comments",
+    "target_url": "https://www.instagram.com/p/DZBz70FmGrj/",
+    "token_index": 4,
+    "status_code": 201,
+    "result_count": 5,
+    "api_status": "success",
+    "estimated_cost": 0.032
+  },
+  {
+    "timestamp": "2026-06-06T05:44:41Z",
+    "method": "comments",
+    "target_url": "https://www.instagram.com/p/DZBwXKdxEqz/",
+    "token_index": 5,
+    "status_code": 201,
+    "result_count": 15,
+    "api_status": "success",
+    "estimated_cost": 0.032
+  },
+  {
+    "timestamp": "2026-06-06T05:44:47Z",
+    "method": "comments",
+    "target_url": "https://www.instagram.com/p/DZAAaISRMTR/",
+    "token_index": 1,
+    "status_code": 201,
+    "result_count": 9,
+    "api_status": "success",
+    "estimated_cost": 0.032
+  },
+  {
+    "timestamp": "2026-06-06T05:44:55Z",
+    "method": "comments",
+    "target_url": "https://www.instagram.com/p/DY_nAGcxXMj/",
+    "token_index": 2,
+    "status_code": 201,
+    "result_count": 9,
+    "api_status": "success",
+    "estimated_cost": 0.032
+  },
+  {
+    "timestamp": "2026-06-06T05:45:02Z",
+    "method": "comments",
+    "target_url": "https://www.instagram.com/p/DZB7blIxKiz/",
+    "token_index": 3,
+    "status_code": 201,
+    "result_count": 15,
+    "api_status": "success",
+    "estimated_cost": 0.032
+  },
+  {
+    "timestamp": "2026-06-06T05:45:25Z",
+    "method": "comments",
+    "target_url": "https://www.instagram.com/p/DZB3FPTRf39/",
+    "token_index": 4,
+    "status_code": 201,
+    "result_count": 15,
+    "api_status": "success",
+    "estimated_cost": 0.032
+  },
+  {
+    "timestamp": "2026-06-06T05:45:40Z",
+    "method": "comments",
+    "target_url": "https://www.instagram.com/p/DY_VypmRLHN/",
+    "token_index": 5,
+    "status_code": 201,
+    "result_count": 15,
+    "api_status": "success",
+    "estimated_cost": 0.032
+  },
+  {
+    "timestamp": "2026-06-06T05:45:51Z",
+    "method": "comments",
+    "target_url": "https://www.instagram.com/p/DZCdR9ZxyFp/",
+    "token_index": 1,
+    "status_code": 201,
+    "result_count": 15,
+    "api_status": "success",
+    "estimated_cost": 0.032
+  },
+  {
+    "timestamp": "2026-06-06T05:45:58Z",
+    "method": "comments",
+    "target_url": "https://www.instagram.com/p/DY_cAomRrKf/",
+    "token_index": 2,
+    "status_code": 201,
+    "result_count": 15,
+    "api_status": "success",
+    "estimated_cost": 0.032
+  },
+  {
+    "timestamp": "2026-06-06T05:46:10Z",
+    "method": "comments",
+    "target_url": "https://www.instagram.com/p/DZNLtqIx6jT/",
+    "token_index": 3,
+    "status_code": 201,
+    "result_count": 15,
+    "api_status": "success",
+    "estimated_cost": 0.032
+  },
+  {
+    "timestamp": "2026-06-06T05:58:44Z",
+    "method": "posts",
+    "target_url": "https://www.instagram.com/ericahyadi_/",
+    "token_index": 1,
+    "status_code": 201,
+    "result_count": 5,
+    "api_status": "success",
+    "estimated_cost": 0.032
+  }
+]

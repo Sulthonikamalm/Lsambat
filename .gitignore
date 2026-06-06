@@ -1,11 +1,19 @@
+# ── KUNCI: jangan pernah commit token API ──
 .env
+.env.local
+.env.*.local
+
+# ── Python ──
 __pycache__/
 *.pyc
-data/*.json
-data/*.csv
-# source_registry.csv adalah input (daftar akun) — tetap di-track
-!data/source_registry.csv
-data/_archive/
-.vscode/
+*.pyo
 venv/
+.venv/
+
+# ── Editor ──
+.vscode/
 .idea/
+
+# ── Data: hasil scrape boleh di-track (untuk shared dataset demo) ──
+# .env tetap dilindungi oleh aturan di atas — tidak akan ikut walau di data/
+data/_archive/
