@@ -40,13 +40,18 @@ def record_scrape(path: Path, trigger: str, summary: dict,
                   api_calls_session: int = 0, estimated_cost_session: float = 0.0):
     """Catat satu sesi scraping ke history termasuk biaya."""
     history = load_scrape_history(path)
+    _new = summary.get("total_new_comments", 0)
+    _baseline = summary.get("total_baseline_comments", 0)
     history.append({
         "timestamp": datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"),
         "trigger": trigger,
         "posts_discovered": summary.get("total_posts_discovered", 0),
         "new_posts": summary.get("total_new_posts", 0),
-        "new_comments": summary.get("total_new_comments", 0),
+        "new_comments": _new,
+        "baseline_comments": _baseline,
+        "saved_comments": _new + _baseline,
         "skipped_low_relevance": summary.get("skipped_low_relevance", 0),
+        "skipped_zero_comments": summary.get("skipped_zero_comments", 0),
         "api_calls_session": api_calls_session,
         "estimated_cost_session": round(estimated_cost_session, 4),
     })

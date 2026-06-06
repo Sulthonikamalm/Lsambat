@@ -100,6 +100,12 @@ def run_unified_scrape(scraper, settings, paths, history_path,
 
         # Phase 2: Process Queue
         emit_log(f"Langkah 2/2: Mengambil komentar dari {queued} postingan...", "info")
+        # Beritahu UI: queue siap diproses, total N item — supaya dashboard bisa
+        # menampilkan progress bar "0/N → N/N" live, bukan menunggu scrape selesai.
+        socketio.emit("queue_ready", {
+            "total_queued": queued,
+            "cost_per_call": settings["apify"].get("estimated_cost_per_call", 0.032),
+        })
 
         queue_summary = _process_queue(
             scraper, scrape_settings, paths, stop_event, emit_log, socketio
@@ -107,6 +113,26 @@ def run_unified_scrape(scraper, settings, paths, history_path,
 
         total_comments = queue_summary.get("total_new_comments", 0)
         total_baseline = queue_summary.get("total_baseline_comments", 0)
+        total_saved = total_comments + total_baseline
+
+        # Ringkasan akhir yang jelas — supaya user paham data tersimpan walau
+        # "new=0" (kasus scrape pertama: semua komentar lama → baseline).
+        if total_saved == 0:
+            emit_log("ℹ️ Tidak ada komentar tersimpan dari siklus ini.", "info")
+        elif total_comments == 0 and total_baseline > 0:
+            emit_log(
+                f"📦 {total_saved} komentar tersimpan ke dataset "
+                f"(semua baseline — komentar lama yang sudah ada saat post pertama ditemukan).",
+                "success",
+            )
+        elif total_baseline == 0:
+            emit_log(f"🎉 {total_comments} komentar BARU masuk dataset.", "success")
+        else:
+            emit_log(
+                f"📦 {total_saved} komentar tersimpan "
+                f"({total_comments} baru · {total_baseline} baseline).",
+                "success",
+            )
 
         combined_summary = {
             "total_posts_discovered": total_found,
@@ -153,11 +179,31 @@ def _process_queue(scraper, settings, paths, stop_event, emit_log, socketio):
     """Proses antrean queue dan emit progress per item."""
     def on_queue_item(item):
         if item["status"] == "completed":
-            emit_log(
-                f"✅ {item.get('source_account', '')} — "
-                f"{item['new_comments']} komentar baru",
-                "success",
-            )
+            new_c = item.get("new_comments", 0)
+            base_c = item.get("baseline_comments", 0)
+            total_saved = new_c + base_c
+            # Tampilkan total tersimpan + breakdown supaya user tidak salah kira
+            # "0 komentar" padahal sebenarnya semua komentar tersimpan sebagai baseline
+            # (kasus scrape PERTAMA: post baru ditemukan → komentar lama = baseline).
+            if total_saved == 0:
+                msg = f"ℹ️ {item.get('source_account', '')} — 0 komentar"
+            elif base_c > 0 and new_c == 0:
+                msg = (
+                    f"✅ {item.get('source_account', '')} — "
+                    f"{total_saved} komentar tersimpan (semua baseline)"
+                )
+            elif base_c == 0:
+                msg = (
+                    f"✅ {item.get('source_account', '')} — "
+                    f"{new_c} komentar baru"
+                )
+            else:
+                msg = (
+                    f"✅ {item.get('source_account', '')} — "
+                    f"{total_saved} komentar tersimpan "
+                    f"({new_c} baru · {base_c} baseline)"
+                )
+            emit_log(msg, "success")
         else:
             error_msg = item.get("error_message", "")
             if any(kw in error_msg.lower() for kw in ["kuota", "quota", "limit"]):
@@ -198,18 +244,20 @@ def _record_and_emit(scraper, settings, history_path, trigger, summary,
                       api_calls_session=billable_calls,
                       estimated_cost_session=session_cost)
 
+    _baseline = (queue_summary.get("total_baseline_comments", 0) if queue_summary else 0)
     result = {
         "success": True,
         "posts_found": total_found,
         "new_posts": total_new,
         "new_comments": total_comments,
+        "baseline_comments": _baseline,
+        "saved_comments": total_comments + _baseline,
     }
 
     if queue_summary:
         result["completed"] = queue_summary.get("total_completed", 0)
         result["failed"] = queue_summary.get("total_failed", 0)
         result["skipped"] = queue_summary.get("total_skipped", 0)
-        result["baseline_comments"] = queue_summary.get("total_baseline_comments", 0)
         result["stopped_early"] = queue_summary.get("stopped_early", False)
 
     socketio.emit("scrape_complete", result)

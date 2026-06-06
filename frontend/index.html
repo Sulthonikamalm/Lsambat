@@ -261,6 +261,37 @@
                     <div class="token-badges" id="tokenBadges"></div>
                 </div>
 
+                <!-- LIVE PROGRESS PANEL — muncul saat scrape sedang berjalan -->
+                <div id="liveProgressPanel" class="live-progress-panel" style="display:none; margin-top: var(--space-lg);">
+                    <div class="live-progress-header">
+                        <span class="live-progress-pulse"></span>
+                        <strong>Sedang berjalan…</strong>
+                        <span id="liveProgressPhase" class="live-progress-phase">Mempersiapkan</span>
+                        <span id="liveProgressElapsed" class="live-progress-elapsed">0s</span>
+                    </div>
+                    <div class="live-progress-bar-wrap">
+                        <div id="liveProgressBar" class="live-progress-bar" style="width:0%"></div>
+                    </div>
+                    <div class="live-progress-stats">
+                        <div class="live-stat">
+                            <span class="live-stat-label">Postingan diproses</span>
+                            <span class="live-stat-val"><span id="liveProcessedCount">0</span> / <span id="liveTotalCount">0</span></span>
+                        </div>
+                        <div class="live-stat">
+                            <span class="live-stat-label">Komentar terkumpul</span>
+                            <span class="live-stat-val" id="liveCommentsCount">0</span>
+                        </div>
+                        <div class="live-stat">
+                            <span class="live-stat-label">Baru / Baseline</span>
+                            <span class="live-stat-val"><span id="liveNewCount" style="color:#16a34a;">0</span> / <span id="liveBaselineCount" style="color:#6b7280;">0</span></span>
+                        </div>
+                        <div class="live-stat">
+                            <span class="live-stat-label">Akses data</span>
+                            <span class="live-stat-val"><span id="liveCallCount">0</span> · Rp <span id="liveCostCount">0</span></span>
+                        </div>
+                    </div>
+                </div>
+
                 <!-- Scrape history table (Q1: transparansi biaya per sesi) -->
                 <div class="scrape-history-section" id="scrapeHistorySection" style="margin-top: var(--space-lg);">
                     <h3 class="scrape-history-title">

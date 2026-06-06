@@ -1,7 +1,8 @@
 """
 services/scheduler_service.py — Background auto-scrape scheduler.
 
-MODE DEMO: scraping otomatis setiap 2 menit saat sistem aktif.
+MODE DEMO: scraping otomatis setiap N menit saat sistem aktif
+(default 120 menit / 2 jam, dapat diubah via DEMO_INTERVAL_MINUTES).
 """
 
 import logging
@@ -11,13 +12,23 @@ from datetime import datetime, timezone, timedelta
 
 logger = logging.getLogger("demo_monitor")
 
-# Interval demo: 2 menit
-DEMO_INTERVAL_MINUTES = 2
-CHECK_INTERVAL_SECONDS = 10
+# Interval demo: 120 menit (2 jam) — supaya tidak bertumpuk siklus pendek dan
+# memberi waktu komentar baru muncul. Untuk produksi mitra: ganti ke jadwal
+# mingguan menggunakan auto_scrape_day/hour di settings.yaml.
+DEMO_INTERVAL_MINUTES = 120
+CHECK_INTERVAL_SECONDS = 30
+
+
+def format_interval(minutes: int) -> str:
+    """Format human-readable: 90 → '1 jam 30 menit', 120 → '2 jam', 45 → '45 menit'."""
+    if minutes < 60:
+        return f"{minutes} menit"
+    hours, rem = divmod(minutes, 60)
+    return f"{hours} jam" if rem == 0 else f"{hours} jam {rem} menit"
 
 
 def calculate_next_scrape_time(system_active, last_auto_scrape_time):
-    """Hitung waktu scraping otomatis berikutnya (Mode Demo 2 Menit)."""
+    """Hitung waktu scraping otomatis berikutnya."""
     if not system_active or not last_auto_scrape_time:
         return None
     next_scrape_utc = last_auto_scrape_time + timedelta(minutes=DEMO_INTERVAL_MINUTES)
@@ -57,6 +68,8 @@ def start_auto_scrape_loop(app_state, scraper, settings, paths, socketio):
             "is_scraping": app_state["scrape_lock"].locked(),
             "auto_scrape_day": schedule_cfg.get("auto_scrape_day", "monday"),
             "auto_scrape_hour": schedule_cfg.get("auto_scrape_hour", 8),
+            "auto_scrape_interval_minutes": DEMO_INTERVAL_MINUTES,
+            "auto_scrape_interval_label": format_interval(DEMO_INTERVAL_MINUTES),
             "next_auto_scrape_time": calculate_next_scrape_time(
                 app_state["system_active"],
                 app_state["last_auto_scrape_time"]
@@ -81,8 +94,9 @@ def start_auto_scrape_loop(app_state, scraper, settings, paths, socketio):
 
                         tier = get_current_tier(settings, app_state["history_path"])
                         if tier["allowed"] and app_state["scrape_lock"].acquire(blocking=False):
-                            logger.info("[Scheduler] Memulai scraping otomatis (Demo 2 menit)!")
-                            _emit_log("🤖 Memulai scraping otomatis (Mode Demo 2 Menit).", "info")
+                            _interval_label = format_interval(DEMO_INTERVAL_MINUTES)
+                            logger.info(f"[Scheduler] Memulai scraping otomatis (interval {_interval_label})!")
+                            _emit_log(f"🤖 Memulai scraping otomatis (interval {_interval_label}).", "info")
                             app_state["scrape_stop_event"].clear()
                             socketio.emit("scrape_started", {"tier": tier["tier_number"]})
                             try:

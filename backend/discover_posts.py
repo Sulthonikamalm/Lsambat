@@ -28,6 +28,16 @@ logger = logging.getLogger("demo_monitor")
 from discovery.registry import load_source_registry, get_active_sources
 
 
+def _has_comments(post: dict) -> bool:
+    """True kalau post punya >=1 komentar. None/kosong/non-numerik → False
+    (lebih hemat: jangan panggil Apify untuk post yang count-nya tak diketahui)."""
+    raw = post.get("comment_count_last_seen", "")
+    try:
+        return int(float(str(raw).strip())) > 0
+    except (ValueError, TypeError):
+        return False
+
+
 def run_post_discovery(scraper, settings, paths, stop_event=None) -> dict:
     """
     Jalankan discovery untuk semua akun aktif.
@@ -113,6 +123,11 @@ def run_post_discovery(scraper, settings, paths, stop_event=None) -> dict:
 
     # Q2: Filter postingan LOW dari antrean (hemat API call)
     queue_only_relevant = pd_settings.get("queue_only_relevant", True)
+    # Skip post yang count komentarnya 0 / tidak diketahui — buat apa panggil
+    # actor komentar kalau tidak ada yang dikomentari? Hemat 1 call per post.
+    # Post 0-komentar TETAP tersimpan di raw_posts.csv → kalau nanti dapat
+    # komentar, akan terdeteksi via comment_count_changed di siklus berikutnya.
+    skip_zero_comments = pd_settings.get("skip_zero_comments", True)
     if new_posts:
         if queue_only_relevant:
             relevant_posts = [p for p in new_posts if p.get("post_relevance") in ("high", "medium")]
@@ -125,6 +140,17 @@ def run_post_discovery(scraper, settings, paths, stop_event=None) -> dict:
                 summary["skipped_low_relevance"] = skipped_low
         else:
             relevant_posts = new_posts
+
+        if skip_zero_comments:
+            before = len(relevant_posts)
+            relevant_posts = [p for p in relevant_posts if _has_comments(p)]
+            skipped_zero = before - len(relevant_posts)
+            if skipped_zero:
+                logger.info(
+                    f"Filter 0-komentar: {skipped_zero} postingan dilewati "
+                    f"(hemat {skipped_zero} API call)"
+                )
+                summary["skipped_zero_comments"] = skipped_zero
 
         summary["total_queued"] += add_posts_to_queue(
             relevant_posts, "new_post", paths["post_queue_csv"]

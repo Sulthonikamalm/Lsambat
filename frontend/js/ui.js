@@ -15,11 +15,20 @@ function applyStatusData(data) {
     if (data.system_active) {
         toggle.checked = true;
         label.textContent = "Sistem Aktif (Demo)";
-        desc.textContent = `Scraping otomatis: Setiap 2 Menit`;
-        badge.textContent = "Aktif (Demo)";
-        badge.className = "mode-badge mode-official_monitoring";
+        const intervalLabel = data.auto_scrape_interval_label || "2 jam";
+        desc.textContent = `Scraping otomatis: setiap ${intervalLabel}`;
+        // Badge dinamis: tampilkan "SEDANG SCRAPING" bila proses sedang jalan,
+        // bukan hanya "AKTIF" — supaya user lihat sistem nyata bekerja.
+        if (data.is_scraping) {
+            badge.textContent = "🔄 Sedang Scraping…";
+            badge.className = "mode-badge mode-scraping";
+            footerTag.textContent = "Sedang Scraping…";
+        } else {
+            badge.textContent = "Aktif (Demo)";
+            badge.className = "mode-badge mode-official_monitoring";
+            footerTag.textContent = "Sistem Aktif (Demo)";
+        }
         dot.className = "mode-pulse-dot active";
-        footerTag.textContent = "Sistem Aktif (Demo)";
         
         if (data.next_auto_scrape_time) {
             startCountdownTimer(data.next_auto_scrape_time, countdownEl);
@@ -170,11 +179,19 @@ function renderScrapeHistory(history) {
         const USD_TO_IDR = 16000;
         const cost = h.estimated_cost_session != null ? `Rp ${Math.round(Number(h.estimated_cost_session) * USD_TO_IDR).toLocaleString("id-ID")}` : "—";
         const calls = h.api_calls_session != null ? h.api_calls_session : "—";
+        const newC = h.new_comments || 0;
+        const baseC = h.baseline_comments || 0;
+        const saved = h.saved_comments != null ? h.saved_comments : (newC + baseC);
+        // Tampilkan total tersimpan; breakdown ditampilkan sebagai tooltip
+        // (baru · baseline) — supaya kolom tabel tetap ringkas.
+        const commentCell = baseC > 0
+            ? `<span title="${newC} baru · ${baseC} baseline">${saved} <span style="opacity:.55;font-size:.85em;">(${newC}b)</span></span>`
+            : `${saved}`;
         return `<tr>
             <td>${time}</td>
             <td>${triggerLabel}</td>
             <td style="text-align:center;">${h.new_posts || 0}</td>
-            <td style="text-align:center;">${h.new_comments || 0}</td>
+            <td style="text-align:center;">${commentCell}</td>
             <td style="text-align:center;">${calls}</td>
             <td style="text-align:right; font-family: 'JetBrains Mono', monospace; font-weight: 700;">${cost}</td>
         </tr>`;

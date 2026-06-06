@@ -99,7 +99,9 @@ def api_stop_scrape():
 
 def _get_status_data():
     from helpers.rate_limiter import get_current_tier
-    from services.scheduler_service import calculate_next_scrape_time
+    from services.scheduler_service import (
+        calculate_next_scrape_time, DEMO_INTERVAL_MINUTES, format_interval,
+    )
 
     state = _deps["app_state"]
     tier = get_current_tier(_deps["settings"], state["history_path"])
@@ -109,6 +111,8 @@ def _get_status_data():
         "is_scraping": state["scrape_lock"].locked(),
         "auto_scrape_day": schedule_cfg.get("auto_scrape_day", "monday"),
         "auto_scrape_hour": schedule_cfg.get("auto_scrape_hour", 8),
+        "auto_scrape_interval_minutes": DEMO_INTERVAL_MINUTES,
+        "auto_scrape_interval_label": format_interval(DEMO_INTERVAL_MINUTES),
         "next_auto_scrape_time": calculate_next_scrape_time(
             state["system_active"], state["last_auto_scrape_time"]
         ),

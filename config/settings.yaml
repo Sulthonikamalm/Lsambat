@@ -7,9 +7,12 @@ apify:
     facebook: "apify/facebook-posts-scraper"            # untuk DISCOVERY postingan FB
     facebook_comments: "apify/facebook-comments-scraper"  # untuk KOMENTAR FB (actor berbeda)
   token_envs:
+    # MODE DEMO: 5 token free tier. Untuk produksi mitra, sisakan 1 token berbayar.
     - "APIFY_TOKEN_1"
     - "APIFY_TOKEN_2"
     - "APIFY_TOKEN_3"
+    - "APIFY_TOKEN_4"
+    - "APIFY_TOKEN_5"
   request_timeout_seconds: 300
   estimated_cost_per_call: 0.032     # estimasi biaya USD per API call Apify
 
@@ -20,12 +23,14 @@ schedule:
   auto_scrape_enabled: false         # ON/OFF sistem (diubah via dashboard)
 
 # Rate limiting — batasan scraping per minggu (timestep budget)
+# MODE DEMO: dilonggarkan agar bisa Run-Once berkali-kali selama 1 jam panen dataset.
+# Untuk produksi mitra: kembalikan ke 4.
 rate_limit:
-  max_scrapes_per_week: 4            # total maks scraping per minggu
+  max_scrapes_per_week: 100          # DEMO=100 | PROD=4
   budget_tiers:
     # Tier 1: scraping otomatis mingguan (full scan)
     - tier: 1
-      posts_per_source: 10
+      posts_per_source: 50              # DEMO=50 (panen backlog) | PROD=10
       comments_per_post: 100
     # Tier 2: scraping manual tambahan pertama
     - tier: 2
@@ -106,6 +111,7 @@ post_discovery:
   use_monitoring_window: true        # onlyPostsNewerThan = today - monitoring_window_days
   comments_per_post: 100             # limit komentar per post saat proses antrean
   queue_only_relevant: true          # hanya queue postingan high/medium (hemat API call)
+  skip_zero_comments: true           # skip post yang count komentar = 0 (hemat 1 call/post — terdeteksi otomatis bila nanti dapat komentar)
   min_comment_increase: 1            # minimal kenaikan komentar untuk re-queue postingan lama (1 = tangkap semua komentar baru)
 
 output:

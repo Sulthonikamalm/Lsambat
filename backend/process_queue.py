@@ -361,11 +361,14 @@ def process_pending_queue(scraper, settings, paths, on_item=None, stop_event=Non
         safe_write_csv(df_posts, paths["raw_posts_csv"],
                        "raw_instagram_posts (count update)", logger)
 
+    _saved = summary["total_new_comments"] + summary["total_baseline_comments"]
     logger.info(
         f"Antrean selesai: {summary['total_completed']} berhasil, "
         f"{summary['total_failed']} gagal, "
         f"{summary['total_skipped']} dilewati, "
-        f"{summary['total_new_comments']} komentar baru"
+        f"{_saved} komentar tersimpan "
+        f"({summary['total_new_comments']} baru · "
+        f"{summary['total_baseline_comments']} baseline)"
     )
     return summary
 

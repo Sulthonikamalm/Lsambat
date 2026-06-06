@@ -39,7 +39,9 @@ def _emit_log(message, level="info"):
 
 
 def _get_status_data():
-    from services.scheduler_service import calculate_next_scrape_time
+    from services.scheduler_service import (
+        calculate_next_scrape_time, DEMO_INTERVAL_MINUTES, format_interval,
+    )
 
     state = _deps["app_state"]
     tier = get_current_tier(_deps["settings"], state["history_path"])
@@ -49,6 +51,8 @@ def _get_status_data():
         "is_scraping": state["scrape_lock"].locked(),
         "auto_scrape_day": schedule_cfg.get("auto_scrape_day", "monday"),
         "auto_scrape_hour": schedule_cfg.get("auto_scrape_hour", 8),
+        "auto_scrape_interval_minutes": DEMO_INTERVAL_MINUTES,
+        "auto_scrape_interval_label": format_interval(DEMO_INTERVAL_MINUTES),
         "next_auto_scrape_time": calculate_next_scrape_time(
             state["system_active"], state["last_auto_scrape_time"]
         ),
@@ -82,8 +86,9 @@ def api_toggle_system():
             return jsonify({"success": False, "error": "Belum ada akun aktif"})
 
         state["last_auto_scrape_time"] = datetime.now(timezone.utc)
+        from services.scheduler_service import DEMO_INTERVAL_MINUTES, format_interval
         _emit_log(
-            "✅ Sistem diaktifkan. [MODE DEMO] Scraping otomatis setiap 2 menit.",
+            f"✅ Sistem diaktifkan. Scraping otomatis setiap {format_interval(DEMO_INTERVAL_MINUTES)}.",
             "success",
         )
     else:

@@ -1,3 +1,6 @@
-﻿source_id,source_account,platform,priority_level,monitoring_window_days,status,notes
-SRC001,@lsambat__,instagram,1,30,active,akun lab internal
-SRC002,e100ss,facebook,2,30,active,Ditambahkan via dashboard (facebook)
+source_id,source_account,platform,priority_level,monitoring_window_days,status,notes
+SRC001,@ericahyadi_,instagram,2,60,active,Ditambahkan via dashboard (instagram)
+SRC002,@cakj1,instagram,2,60,active,Ditambahkan via dashboard (instagram)
+SRC003,@dishubsurabaya,instagram,1,60,active,Ditambahkan via dashboard (instagram)
+SRC004,@satgasviralsby,instagram,3,60,active,Ditambahkan via dashboard (instagram)
+SRC005,@aslisuroboyo,instagram,3,60,active,Ditambahkan via dashboard (instagram)

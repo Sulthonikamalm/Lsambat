@@ -145,6 +145,16 @@
 .mode-badge.mode-official_monitoring { color: var(--color-success); }
 .mode-badge.mode-warmup { color: var(--color-warning); }
 .mode-badge.mode-stopped { color: var(--text-muted); }
+.mode-badge.mode-scraping {
+    color: #0369a1;
+    background: rgba(14,165,233,0.12);
+    border-color: rgba(14,165,233,0.35);
+    animation: scrapingBadgePulse 1.8s ease-in-out infinite;
+}
+@keyframes scrapingBadgePulse {
+    0%, 100% { background: rgba(14,165,233,0.10); }
+    50%      { background: rgba(14,165,233,0.22); }
+}
 
 /* ── METRICS GRID (Sleek Horizontal Value-on-top layout) ─── */
 .metrics-grid {

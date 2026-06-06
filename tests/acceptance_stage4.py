@@ -489,6 +489,89 @@ def scenario_12_deferred_count():
           _post_count(paths, "AAA111") == "10", f"count={_post_count(paths, 'AAA111')}")
 
 
+def scenario_14_summary_includes_baseline():
+    print("\n[Skenario 14] Summary process_pending_queue paparkan baseline + saved (bukan hanya new)")
+    _, paths, settings = make_env(
+        [("SRC001", "@surabaya", "instagram", "1", "30", "active", "pemkot")],
+        post_discovery={"max_posts_per_source": 10, "only_active_sources": True,
+                        "use_monitoring_window": True, "comments_per_post": 100,
+                        "min_comment_increase": 1},
+    )
+    scraper = FakeScraper()
+    url = "https://www.instagram.com/p/AAA/"
+    # 1 post baru, 2 komentar lama (baseline) — semua dibuat 1 jam SEBELUM scrape
+    scraper.posts_by_profile["https://www.instagram.com/surabaya/"] = [
+        post_item(url=url, caption="banjir parah", comments=2),
+    ]
+    import datetime as _dt
+    old_ts = (_dt.datetime.now(_dt.timezone.utc) - _dt.timedelta(hours=1)).isoformat()
+    scraper.comments_by_url[url] = [
+        {"id": "c1", "text": "tolong perbaiki", "timestamp": old_ts, "shortCode": "AAA"},
+        {"id": "c2", "text": "wargaku lapor", "timestamp": old_ts, "shortCode": "AAA"},
+    ]
+    dp.run_post_discovery(scraper, settings, paths)
+    summary = pq.process_pending_queue(scraper, settings, paths)
+    df_c = load_csv_if_exists(paths["raw_comments_csv"])
+
+    check("S14: 2 komentar tersimpan di CSV", len(df_c) == 2, f"rows={len(df_c)}")
+    check("S14: semua tagged baseline (scrape pertama)",
+          (df_c["is_baseline"] == "true").all(), str(df_c["is_baseline"].tolist()))
+    check("S14: total_baseline_comments = 2", summary.get("total_baseline_comments") == 2,
+          f"baseline={summary.get('total_baseline_comments')}")
+    check("S14: total_new_comments = 0 (semua baseline)",
+          summary.get("total_new_comments") == 0,
+          f"new={summary.get('total_new_comments')}")
+    saved = summary.get("total_new_comments", 0) + summary.get("total_baseline_comments", 0)
+    check("S14: saved (= new + baseline) = 2 → bukti komentar TIDAK hilang", saved == 2,
+          f"saved={saved}")
+
+
+def scenario_13_skip_zero_comments():
+    print("\n[Skenario 13] Skip post 0-komentar dari antrean (hemat API call)")
+    _, paths, settings = make_env(
+        [("SRC001", "@surabaya", "instagram", "1", "30", "active", "pemkot")],
+        post_discovery={"max_posts_per_source": 10, "only_active_sources": True,
+                        "use_monitoring_window": True, "comments_per_post": 100,
+                        "skip_zero_comments": True, "queue_only_relevant": True,
+                        "min_comment_increase": 1},
+    )
+    scraper = FakeScraper()
+    # 3 post relevan (caption mengandung kata kunci), tapi count komentar berbeda
+    scraper.posts_by_profile["https://www.instagram.com/surabaya/"] = [
+        post_item(url="https://www.instagram.com/p/AAA/", caption="banjir parah", comments=10),  # ada komentar
+        post_item(url="https://www.instagram.com/p/BBB/", caption="jalan rusak", comments=0),    # 0 komentar
+        post_item(url="https://www.instagram.com/p/CCC/", caption="sampah menumpuk", comments=3),  # ada komentar
+    ]
+    summary = dp.run_post_discovery(scraper, settings, paths)
+    df_q = load_post_queue(paths["post_queue_csv"])
+    df_p = load_csv_if_exists(paths["raw_posts_csv"])
+
+    check("S13: hanya 2 post masuk antrean (BBB di-skip)", len(df_q) == 2,
+          f"queue={len(df_q)}")
+    queued_codes = set(df_q["post_url"].str.extract(r"/p/([^/]+)/")[0].tolist())
+    check("S13: post 0-komentar (BBB) TIDAK di-antrean", "BBB" not in queued_codes,
+          f"queued={queued_codes}")
+    check("S13: post berkomentar (AAA, CCC) di-antrean",
+          {"AAA", "CCC"}.issubset(queued_codes), f"queued={queued_codes}")
+    check("S13: skipped_zero_comments tercatat di summary",
+          summary.get("skipped_zero_comments") == 1,
+          f"skipped={summary.get('skipped_zero_comments')}")
+    check("S13: SEMUA post (termasuk BBB) tetap tersimpan di raw_posts.csv",
+          len(df_p) == 3, f"raw_posts={len(df_p)}")
+
+    # Skenario lanjutan: post BBB akhirnya dapat 2 komentar → comment_count_changed harus tangkap
+    scraper.posts_by_profile["https://www.instagram.com/surabaya/"] = [
+        post_item(url="https://www.instagram.com/p/AAA/", caption="banjir parah", comments=10),
+        post_item(url="https://www.instagram.com/p/BBB/", caption="jalan rusak", comments=2),  # 0→2
+        post_item(url="https://www.instagram.com/p/CCC/", caption="sampah menumpuk", comments=3),
+    ]
+    summary2 = dp.run_post_discovery(scraper, settings, paths)
+    df_q2 = load_post_queue(paths["post_queue_csv"])
+    check("S13: BBB akhirnya tertangkap saat dapat komentar (comment_count_changed)",
+          summary2["total_comment_changed"] >= 1,
+          f"changed={summary2['total_comment_changed']}")
+
+
 def scenario_9_flask():
     print("\n[Skenario 9] Smoke test Flask: API baru jalan + route lama tetap ada")
     try:
@@ -529,6 +612,8 @@ def main():
     scenario_10_quota_retry()
     scenario_11_new_comment_detection()
     scenario_12_deferred_count()
+    scenario_13_skip_zero_comments()
+    scenario_14_summary_includes_baseline()
     scenario_9_flask()
 
     print("\n" + "=" * 64)
